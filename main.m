@@ -10,16 +10,14 @@ hold on;
 axis([-10 200 -100 100], "equal");
 
 
-c1 = CreateCamera();
-c2 = CreateCamera(Rot2D(pi/4), [10;-50]);
-DrawCamera(c1)
-DrawCamera(c2)
+cam(1) = CreateCamera();
+cam(2) = CreateCamera(Rot2D(pi/4), [10;-50]);
+DrawCamera(cam)
 
 X = [75;6];
 
-C1 = CalculateCovariance(c1, X);
-C2 = CalculateCovariance(c2, X);
-C = CombineGaussians([C1;C2]).C;
+Ci_mu = CalculateCovariance(cam, X);
+C = CombineGaussians(Ci_mu).C;
 h = my_2D_error_ellipse(C, X, 'conf', 0.95);
 
 

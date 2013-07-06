@@ -1,23 +1,34 @@
 function DrawCamera(cam)
 
-%cam: camera struct
-
+%cam: nx1 struct array of camera structs
 
 default_center_circle_radius = 2;
-p = circleToPolygon([cam.T(1) cam.T(2) default_center_circle_radius]);
-fill(p(:,1), p(:,2), "b");
 
-c = cam.T;
-f = cam.normal_vectors.front;
-dl = Rot2D(pi/2) * cam.normal_vectors.low;
-if(dl' * f < 0)
-  dl *= -1;
-end
-dh = Rot2D(pi/2) * cam.normal_vectors.high;
-if(dh' * f < 0)
-  dh *= -1;
-end
+for i = 1:length(cam)
 
-drawRay([c;dl]');
-drawRay([c;dh]');
+  p = circleToPolygon([cam(i).T(1) cam(i).T(2) default_center_circle_radius]);
+  fill(p(:,1), p(:,2), "b");
+
+  %center
+  c = cam(i).T;
+
+  %normal vector for front
+  nf = cam(i).normal_vectors.front;
+
+  %direction low
+  dl = Rot2D(pi/2) * cam(i).normal_vectors.low;
+  if(dl' * nf < 0)
+    dl *= -1;
+  end
+
+  %direction high
+  dh = Rot2D(pi/2) * cam(i).normal_vectors.high;
+  if(dh' * nf < 0)
+    dh *= -1;
+  end
+
+  drawRay([c;dl]');
+  drawRay([c;dh]');
+
+end
 
