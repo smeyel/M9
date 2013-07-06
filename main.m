@@ -3,6 +3,9 @@
 
 %draw 2 cameras and the common covariance ellipse
 
+clear
+clc
+
 myAddPath
 
 figure(1); clf;
