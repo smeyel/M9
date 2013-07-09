@@ -6,6 +6,8 @@
 clear
 clc
 
+warning('off', 'Octave:possible-matlab-short-circuit-operator');
+
 myAddPath
 
 figure(1); clf;
