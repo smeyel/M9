@@ -1,14 +1,17 @@
-function cam = CreateCamera(R=eye(2), T=zeros(2,1))
+function cam = CreateCamera(ori=0, pos=zeros(2,1))
 
 %R: Rotation matrix, world <= camera, 2x2 matrix
 %T: Translation matrix, world <= camera, 2x1 vector
 %cam: camera struct
 
 
+cam.ori = ori;
+cam.pos = pos;
+
 %%camera parameters
-%world <= camera
-cam.R = R;
-cam.T = T;
+%camera <= world
+cam.R = Rot2D(-ori);
+cam.T = -pos;
 
 %cam.x_pixel_per_mm = 1;
 %cam.y_pixel_per_mm = 1;
@@ -39,7 +42,8 @@ cam.e_pixel = 1;
 cam.e_mm = cam.e_pixel / cam.pixel_per_mm;
 
 
-cam.normal_vectors.low = cam.R * Rot2D(-cam.fov/2) * [0;1] ;
-cam.normal_vectors.high = cam.R * Rot2D(cam.fov/2) * [0;-1] ;
-cam.normal_vectors.front = cam.R * [1;0] ;
+%world <= camera
+cam.normal_vectors.low = cam.R' * Rot2D(-cam.fov/2) * [0;1] ;
+cam.normal_vectors.high = cam.R' * Rot2D(cam.fov/2) * [0;-1] ;
+cam.normal_vectors.front = cam.R' * [1;0] ;
 

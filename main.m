@@ -14,7 +14,7 @@ axis([-10 200 -100 100], "equal");
 
 
 cam(1) = CreateCamera();
-cam(2) = CreateCamera(Rot2D(pi/4), [10;-50]);
+cam(2) = CreateCamera(pi/4, [10;-50]);
 DrawCamera(cam)
 
 X = [75;6];

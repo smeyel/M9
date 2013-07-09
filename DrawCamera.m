@@ -6,11 +6,11 @@ default_center_circle_radius = 2;
 
 for i = 1:length(cam)
 
-  p = circleToPolygon([cam(i).T(1) cam(i).T(2) default_center_circle_radius]);
+  p = circleToPolygon([cam(i).pos ; default_center_circle_radius]);
   fill(p(:,1), p(:,2), "b");
 
   %center
-  c = cam(i).T;
+  c = cam(i).pos;
 
   %normal vector for front
   nf = cam(i).normal_vectors.front;

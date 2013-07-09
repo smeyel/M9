@@ -13,7 +13,7 @@ for i = 1:length(cam)
   %field of view contains the point
   contains = true;
   for [val, key] = cam(i).normal_vectors
-    if (X-cam(i).T)' * val <= 0
+    if (X-cam(i).pos)' * val <= 0
       contains = false;
       break;
     end
@@ -24,7 +24,7 @@ for i = 1:length(cam)
 
 
   %camera and point distance
-  t = norm(X-cam(i).T);
+  t = norm(X-cam(i).pos);
 
   RT = [ cam(i).R  cam(i).T ;
            0   0      1     ] ;
@@ -43,10 +43,10 @@ for i = 1:length(cam)
   Ci = [ 0     0    ;
          0  1/sig^2 ] ;
 
-  %world <= camera <= Ci
-  Rot = cam(i).R * Rot2D(alfa)';
+  %Ci <= camera <= world
+  Rot = Rot2D(-alfa) * cam(i).R;
 
-  out(i).Ci = Rot * Ci * Rot';
+  out(i).Ci = Rot' * Ci * Rot;
   out(i).mu = X;
 
 end
