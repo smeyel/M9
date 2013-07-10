@@ -23,7 +23,7 @@ cam.pixel = 480;
 
 %cam.x_f_pixel = 10;
 %cam.y_f_pixel = 10;
-cam.f_pixel = 2400;
+cam.f_pixel = 400;
 
 %cam.x_f_mm = cam.x_f_pixel / cam.x_pixel_per_mm;
 %cam.y_f_mm = cam.y_f_pixel / cam.y_pixel_per_mm;
