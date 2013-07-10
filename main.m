@@ -39,6 +39,8 @@ elseif pointsetup==2
         reshape(gY, 1, gYs) ] ;
 end
 
+Z = zeros(size(X,2),1);
+
 
 
 %%2D
@@ -56,8 +58,16 @@ for i=1:size(X,2)
   Cit = Comb.Ci;
   if all(eig(Cit) > 1e-10) && all(eig(Ct) > 1e-10)
     h = my_2D_error_ellipse(Ct, Xt, 'conf', 0.95);
+    Z(i) = det(Cit);
+  else
+    Z(i) = 0;
   end
 end
 
 hold off
+
+
+%%3D
+figure(2); clf;
+plot3(X(1,:)', X(2,:)', Z, "o");
 
