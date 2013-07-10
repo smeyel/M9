@@ -14,10 +14,17 @@ figure(1); clf;
 hold on;
 axis([-10 200 -100 100], "equal");
 
+%%--- camera ---
+camsetup = 2;
 
-cam(1) = CreateCamera();
-cam(1) = CreateCamera(-pi/4, [10;50]);
-cam(2) = CreateCamera(pi/4, [10;-50]);
+if camsetup==1
+  cam(1) = CreateCamera(0, [10;0]);
+  cam(2) = CreateCamera(pi, [80;0]);
+elseif camsetup==2
+  cam(1) = CreateCamera(-pi/4, [10;50]);
+  cam(2) = CreateCamera(pi/4, [10;-50]);
+end
+
 DrawCamera(cam)
 
 
