@@ -28,15 +28,22 @@ end
 DrawCamera(cam)
 
 
+%%--- points ---
 %the columns of X are the position vectors
-%X = [75 60 65 ;
-%      6  0  0 ] ;
+pointsetup = 2;
 
-[gX,gY] = meshgrid(40:2:80, -10:2:10);
-gXs = prod(size(gX));
-gYs = prod(size(gY));
-X = [ reshape(gX, 1, gXs) ;
-      reshape(gY, 1, gYs) ] ;
+if pointsetup==1
+  X = [ 75 60 65 ;
+         6  0  0 ] ;
+elseif pointsetup==2
+  [gX,gY] = meshgrid(10:5:80, -20:2:20);
+  gXs = prod(size(gX));
+  gYs = prod(size(gY));
+  X = [ reshape(gX, 1, gXs) ;
+        reshape(gY, 1, gYs) ] ;
+end
+
+
 
 for i=1:size(X,2)
   Xt = X(:,i);
