@@ -26,13 +26,10 @@ for i = 1:length(cam)
   %camera and point distance
   t = norm(X-cam(i).pos);
 
-  RT = [ cam(i).R  cam(i).T ;
-           0   0      1     ] ;
-
   X_w_h = [ X ;
             1 ] ;
 
-  X_c_h = RT * X_w_h;
+  X_c_h = cam(i).RT * X_w_h;
 
 
 

@@ -11,7 +11,10 @@ cam.pos = pos;
 %%camera parameters
 %camera <= world
 cam.R = Rot2D(-ori);
-cam.T = -pos;
+cam.T = -cam.R * pos;
+cam.RT = [ cam.R  cam.T ;
+            0 0     1   ] ;
+
 
 %cam.x_pixel_per_mm = 1;
 %cam.y_pixel_per_mm = 1;
