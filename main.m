@@ -10,9 +10,6 @@ warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
 myAddPath
 
-figure(1); clf;
-hold on;
-axis([-10 200 -100 100], "equal");
 
 %%--- camera ---
 camsetup = 2;
@@ -25,7 +22,6 @@ elseif camsetup==2
   cam(2) = CreateCamera(pi/4, [10;-50]);
 end
 
-DrawCamera(cam)
 
 
 %%--- points ---
@@ -44,6 +40,13 @@ elseif pointsetup==2
 end
 
 
+
+%%2D
+figure(1); clf;
+hold on;
+axis([-10 200 -100 100], "equal");
+
+DrawCamera(cam)
 
 for i=1:size(X,2)
   Xt = X(:,i);
