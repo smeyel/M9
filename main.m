@@ -50,14 +50,13 @@ for i=1:gr
     X = [gX(i,j);gY(i,j)];
     saCov = CalculateCovariance(cam, X);
     sCovRes = CombineGaussians(saCov);
+    valid = sCovRes.valid;
     C = sCovRes.C;
     Ci = sCovRes.Ci;
-    if all(eig(Ci) > 1e-10) && all(eig(C) > 1e-10)
+    if valid
       h = my_2D_error_ellipse(C, X, 'conf', 0.95);
-      gZ(i,j) = det(Ci);
-    else
-      gZ(i) = 0;
     end
+    gZ(i,j) = det(Ci);
   end
 end
 
