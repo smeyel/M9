@@ -66,5 +66,6 @@ hold off
 
 %%3D
 figure(2); clf;
-plot3(gX(:), gY(:), gZ(:), ".");
+%plot3(gX(:), gY(:), gZ(:), ".");
+surf(gX,gY,gZ);
 
