@@ -24,22 +24,17 @@ end
 
 
 
-%%--- points ---
-%the columns of X are the position vectors
-pointsetup = 2;
+%%--- grid ---
+gridsetup = 2;
 
-if pointsetup==1
-  X = [ 75 60 65 ;
-         6  0  0 ] ;
-elseif pointsetup==2
+if gridsetup==1
+elseif gridsetup==2
   [gX,gY] = meshgrid(10:5:80, -20:2:20);
-  gXs = prod(size(gX));
-  gYs = prod(size(gY));
-  X = [ reshape(gX, 1, gXs) ;
-        reshape(gY, 1, gYs) ] ;
 end
+gr = size(gX, 1);
+gc = size(gX, 2);
 
-Z = zeros(size(X,2),1);
+gZ = zeros(gr, gc);
 
 
 
@@ -50,17 +45,19 @@ axis([-10 200 -100 100], "equal");
 
 DrawCamera(cam)
 
-for i=1:size(X,2)
-  Xt = X(:,i);
-  Ci_mu = CalculateCovariance(cam, Xt);
-  Comb = CombineGaussians(Ci_mu);
-  Ct = Comb.C;
-  Cit = Comb.Ci;
-  if all(eig(Cit) > 1e-10) && all(eig(Ct) > 1e-10)
-    h = my_2D_error_ellipse(Ct, Xt, 'conf', 0.95);
-    Z(i) = det(Cit);
-  else
-    Z(i) = 0;
+for i=1:gr
+  for j=1:gc
+    X = [gX(i,j);gY(i,j)];
+    saCov = CalculateCovariance(cam, X);
+    sCovRes = CombineGaussians(saCov);
+    C = sCovRes.C;
+    Ci = sCovRes.Ci;
+    if all(eig(Ci) > 1e-10) && all(eig(C) > 1e-10)
+      h = my_2D_error_ellipse(C, X, 'conf', 0.95);
+      gZ(i,j) = det(Ci);
+    else
+      gZ(i) = 0;
+    end
   end
 end
 
@@ -69,5 +66,5 @@ hold off
 
 %%3D
 figure(2); clf;
-plot3(X(1,:)', X(2,:)', Z, "o");
+plot3(gX(:), gY(:), gZ(:), ".");
 
