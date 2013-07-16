@@ -1,8 +1,6 @@
 
 %file for trying the actual problem
 
-%draw 2 cameras and the common covariance ellipse
-
 clear
 clc
 
@@ -12,6 +10,7 @@ myAddPath
 
 
 %%--- camera ---
+%the location and oreientation of the cameras
 camsetup = 2;
 
 if camsetup==1
@@ -25,6 +24,7 @@ end
 
 
 %%--- grid ---
+%the accuracy is calculated in this points
 gridsetup = 2;
 
 if gridsetup==1
@@ -46,8 +46,11 @@ axis([-10 200 -100 100], "equal");
 
 DrawCamera(cam)
 
+%for every point in grid
 for i=1:gs1
   for j=1:gs2
+
+    %covariance ellipses with cameras in the camsetup are drawn
     X = [gX(i,j);gY(i,j)];
     saCov = CalculateCovariance(cam, X);
     sCovRes = CombineGaussians(saCov);
