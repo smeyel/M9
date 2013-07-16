@@ -31,10 +31,11 @@ if gridsetup==1
 elseif gridsetup==2
   [gX,gY] = meshgrid(10:5:80, -20:2:20);
 end
-gr = size(gX, 1);
-gc = size(gX, 2);
+gs1 = size(gX, 1);
+gs2 = size(gX, 2);
 
-gZ = zeros(gr, gc);
+gW = zeros(gs1, gs2);
+
 
 
 
@@ -45,8 +46,8 @@ axis([-10 200 -100 100], "equal");
 
 DrawCamera(cam)
 
-for i=1:gr
-  for j=1:gc
+for i=1:gs1
+  for j=1:gs2
     X = [gX(i,j);gY(i,j)];
     saCov = CalculateCovariance(cam, X);
     sCovRes = CombineGaussians(saCov);
@@ -56,7 +57,7 @@ for i=1:gr
     if valid
       h = my_2D_error_ellipse(C, X, 'conf', 0.95);
     end
-    gZ(i,j) = det(Ci);
+    gW(i,j) = det(Ci);
   end
 end
 
@@ -65,6 +66,6 @@ hold off
 
 %%3D
 figure(2); clf;
-%plot3(gX(:), gY(:), gZ(:), ".");
-surf(gX,gY,gZ);
+%plot3(gX(:), gY(:), gW(:), ".");
+surf(gX,gY,gW);
 
