@@ -1,4 +1,4 @@
-function DrawCamera(cam)
+function DrawCamera(cam, color="b")
 
 %cam: nx1 struct array of camera structs
 
@@ -7,7 +7,7 @@ default_center_circle_radius = 2;
 for i = 1:length(cam)
 
   p = circleToPolygon([cam(i).pos ; default_center_circle_radius]);
-  fill(p(:,1), p(:,2), "b");
+  fill(p(:,1), p(:,2), color);
 
   %center
   c = cam(i).pos;
@@ -27,8 +27,8 @@ for i = 1:length(cam)
     dh *= -1;
   end
 
-  drawRay([c;dl]');
-  drawRay([c;dh]');
+  drawRay([c;dl]', color);
+  drawRay([c;dh]', color);
 
 end
 
