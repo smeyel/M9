@@ -71,8 +71,12 @@ hold off
 
 %%3D
 figure(2); clf;
+hold on
 colormap([0 0 0])
-contour(gX,gY,gW, 40);
+contour(gX,gY,gW, 60);
+axis([0 150 -60 60], "equal");
+DrawCamera(cam, "k")
+hold off
 
 
 %save
