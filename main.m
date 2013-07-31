@@ -72,7 +72,6 @@ hold off
 %%3D
 figure(2); clf;
 hold on
-colormap([0 0 0])
 contour(gX,gY,gW, 60);
 axis([0 150 -60 60], "equal");
 DrawCamera(cam, "k")
@@ -86,6 +85,7 @@ ylabel("y")
 
 
 %save
+colormap([zeros(63,3) ; ones(1,3)]);
 saveas(figure(1), "figures/covariance_ellipses.eps")
 saveas(figure(2), "figures/contour.eps")
 saveas(figure(3), "figures/meshz.eps")
