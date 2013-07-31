@@ -34,6 +34,11 @@ for i = 1:length(cam)
     drawRay([c;dl]', color);
     drawRay([c;dh]', color);
 
+  else
+
+    l = 10; %length
+    plot([c(1) c(1)+l*nf(1)], [c(2) c(2)+l*nf(2)], color)
+
   end
 
 end
