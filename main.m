@@ -71,6 +71,6 @@ hold off
 
 %%3D
 figure(2); clf;
-%plot3(gX(:), gY(:), gW(:), ".");
-surf(gX,gY,gW);
+colormap([0 0 0])
+contour(gX,gY,gW, 40);
 
