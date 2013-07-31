@@ -78,7 +78,15 @@ axis([0 150 -60 60], "equal");
 DrawCamera(cam, "k")
 hold off
 
+figure(3); clf;
+meshz(gX,gY,gW);
+axis([0 150 -60 60]);
+xlabel("x")
+ylabel("y")
+
 
 %save
 saveas(figure(1), "figures/covariance_ellipses.eps")
 saveas(figure(2), "figures/contour.eps")
+saveas(figure(3), "figures/meshz.eps")
+
