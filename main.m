@@ -31,7 +31,7 @@ gridsetup = 2;
 
 if gridsetup==1
 elseif gridsetup==2
-  [gX,gY] = meshgrid(10:5:80, -20:2:20);
+  [gX,gY] = meshgrid(20:10:140, -40:10:40);
 end
 gs1 = size(gX, 1);
 gs2 = size(gX, 2);
@@ -44,7 +44,7 @@ gW = zeros(gs1, gs2);
 %%2D
 figure(1); clf;
 hold on;
-axis([-10 200 -100 100], "equal");
+axis([0 150 -60 60], "equal");
 
 DrawCamera(cam)
 
