@@ -74,3 +74,7 @@ figure(2); clf;
 colormap([0 0 0])
 contour(gX,gY,gW, 40);
 
+
+%save
+saveas(figure(1), "figures/covariance_ellipses.eps")
+saveas(figure(2), "figures/contour.eps")
