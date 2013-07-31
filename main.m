@@ -8,6 +8,8 @@ warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
 myAddPath
 
+global useFoV=false;
+
 
 %%--- camera ---
 %the location and oreientation of the cameras

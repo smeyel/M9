@@ -4,6 +4,8 @@ function out = CalculateCovariance(cam, X)
 %X: 2x1 vector
 %out: nx1 struct array containing the fields: Ci, mu
 
+global useFoV;
+
 
 for i = 1:length(cam)
 
@@ -11,15 +13,17 @@ for i = 1:length(cam)
   out(i).mu = X;
 
   %field of view contains the point
-  contains = true;
-  for [val, key] = cam(i).normal_vectors
-    if (X-cam(i).pos)' * val <= 0
-      contains = false;
-      break;
+  if useFoV
+    contains = true;
+    for [val, key] = cam(i).normal_vectors
+      if (X-cam(i).pos)' * val <= 0
+        contains = false;
+        break;
+      end
     end
-  end
-  if ~contains
-    continue;
+    if ~contains
+      continue;
+    end
   end
 
 
