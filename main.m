@@ -46,7 +46,7 @@ figure(1); clf;
 hold on;
 axis([0 150 -60 60], "equal");
 
-DrawCamera(cam)
+DrawCamera(cam, "k")
 
 %for every point in grid
 for i=1:gs1
@@ -60,7 +60,7 @@ for i=1:gs1
     C = sCovRes.C;
     Ci = sCovRes.Ci;
     if valid
-      h = my_2D_error_ellipse(C, X, 'conf', 0.95);
+      h = my_2D_error_ellipse(10*C, X, 'conf', 0.95, 'style', "k");
     end
     gW(i,j) = det(Ci);
   end
