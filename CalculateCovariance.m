@@ -34,10 +34,19 @@ for i = 1:length(cam)
             1 ] ;
 
   X_c_h = cam(i).RT * X_w_h;
+  x = X_c_h(1);
+  y = X_c_h(2);
 
-
-
-  alfa = atan( X_c_h(2) / X_c_h(1) );
+  alfa = 0;
+  if x==0
+    if y>0
+      alfa = pi/2;
+    elseif y<0
+      alfa = -pi/2;
+    end
+  else
+    alfa = atan(y/x);
+  end
 
   sig = t * cos(alfa)^2 / cam(i).f_mm * cam(i).e_mm;
 
