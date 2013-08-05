@@ -29,6 +29,20 @@ gW = zeros(gs1, gs2);
 
 
 
+%%--- density ---
+ds1 = gs1;
+ds2 = gs2;
+dYX = zeros(ds1, ds2);
+
+dYX(7:9,8:12) = 1/(3*5);
+
+dmX = sum(sum(dYX .* gX));
+dmY = sum(sum(dYX .* gY));
+
+dW = zeros(ds1, ds2);
+
+
+
 
 %%2D
 figure(1); clf;
