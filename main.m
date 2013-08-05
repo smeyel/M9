@@ -43,6 +43,18 @@ dW = zeros(ds1, ds2);
 
 
 
+%%--- new ---
+%the location of the new camera
+[nX,nY] = meshgrid(90:1:130, 60:1:60);
+
+ns1 = size(nX, 1);
+ns2 = size(nX, 2);
+
+nW = zeros(gs1,gs2,ns1,ns2);
+ndW = zeros(gs1,gs2,ns1,ns2);
+
+
+
 
 %%2D
 figure(1); clf;
@@ -68,10 +80,59 @@ for i=1:gs1
       h = my_2D_error_ellipse(10*C, X, 'conf', 0.95, 'style', "k");
     end
     gW(i,j) = det(Ci);
+
+
+    %progress
+    i,j
+    fflush(stdout);
+
+    %for every location of the new camera
+    for m=1:ns1
+      for n=1:ns2
+        x = nX(m,n);
+        y = nY(m,n);
+        alpha = GetAlpha2D(dmX-x, dmY-y);
+        saCov_n = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], X);
+        sCovRes_n = CombineGaussians(saCov_n);
+        valid_n = sCovRes_n.valid;
+        C_n = sCovRes_n.C;
+        Ci_n = sCovRes_n.Ci;
+        nW(i,j,m,n) = det(Ci_n);
+        ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
+      end
+    end
+
   end
 end
 
 hold off
+
+
+%calculate the best location and orientation for the new camera
+%best means, where it improves the most
+MM1 = sum(ndW, 1);
+MM2 = sum(MM1, 2);
+[MM3,I3] = max(MM2, [], 3);
+[MM4,I4] = max(MM3, [], 4);
+
+m2=I4(1, 1, 1, 1);
+m1=I3(1, 1, 1,m2);
+
+mX = nX(m1,m2);
+mY = nY(m1,m2);
+mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
+
+figure(1)
+hold on
+DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
+hold off
+
+
+%results
+%max indexes
+m1,m2
+%location and orientation values
+mX,mY,mAlpha
 
 
 %%3D
