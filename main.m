@@ -45,6 +45,8 @@ gW = zeros(gs1, gs2);
 figure(1); clf;
 hold on;
 axis([0 150 -60 60], "equal");
+xlabel("x")
+ylabel("y", 'rotation', 0)
 
 DrawCamera(cam, "k")
 
