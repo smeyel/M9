@@ -37,16 +37,7 @@ for i = 1:length(cam)
   x = X_c_h(1);
   y = X_c_h(2);
 
-  alfa = 0;
-  if x==0
-    if y>0
-      alfa = pi/2;
-    elseif y<0
-      alfa = -pi/2;
-    end
-  else
-    alfa = atan(y/x);
-  end
+  alfa = GetAlpha2D(x,y);
 
   sig = t * cos(alfa)^2 / cam(i).f_mm * cam(i).e_mm;
 
