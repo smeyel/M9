@@ -13,26 +13,15 @@ global useFoV=false;
 
 %%--- camera ---
 %the location and oreientation of the cameras
-camsetup = 2;
-
-if camsetup==1
-  cam(1) = CreateCamera(0, [10;0]);
-  cam(2) = CreateCamera(pi, [80;0]);
-elseif camsetup==2
-  cam(1) = CreateCamera(-pi/4, [10;50]);
-  cam(2) = CreateCamera(pi/4, [10;-50]);
-end
+cam(1) = CreateCamera(-pi/4, [10;50]);
+cam(2) = CreateCamera(pi/4, [10;-50]);
 
 
 
 %%--- grid ---
 %the accuracy is calculated in this points
-gridsetup = 2;
+[gX,gY] = meshgrid(20:10:140, -40:10:40);
 
-if gridsetup==1
-elseif gridsetup==2
-  [gX,gY] = meshgrid(20:10:140, -40:10:40);
-end
 gs1 = size(gX, 1);
 gs2 = size(gX, 2);
 
