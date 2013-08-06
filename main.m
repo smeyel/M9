@@ -18,28 +18,28 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 
 
 
+
 %%--- grid ---
 %the accuracy is calculated in this points
+%gX(i,j) is the X with index j
+%gY(i,j) is the Y with index i
 [gX,gY] = meshgrid(20:10:140, -40:10:40);
 
-gs1 = size(gX, 1);
-gs2 = size(gX, 2);
-
-gW = zeros(gs1, gs2);
 
 
 
 %%--- density ---
-ds1 = gs1;
-ds2 = gs2;
-dYX = zeros(ds1, ds2);
+dYX = zeros(size(gX));
 
 dYX(7:9,8:12) = 1/(3*5);
+
+if sum(sum(dYX)) != 1
+  error('dYX is not a valid density function!')
+end
 
 dmX = sum(sum(dYX .* gX));
 dmY = sum(sum(dYX .* gY));
 
-dW = zeros(ds1, ds2);
 
 
 
@@ -47,18 +47,12 @@ dW = zeros(ds1, ds2);
 %the location of the new camera
 [nX,nY] = meshgrid(90:1:130, 60:1:60);
 
-ns1 = size(nX, 1);
-ns2 = size(nX, 2);
-
-nW = zeros(gs1,gs2,ns1,ns2);
-ndW = zeros(gs1,gs2,ns1,ns2);
-
 
 
 
 %for every point in grid
-for i=1:gs1
-  for j=1:gs2
+for i=1:size(gX,1)
+  for j=1:size(gX,2)
 
     %covariance ellipses with cameras in the camsetup are drawn
     X = [gX(i,j);gY(i,j)];
@@ -72,8 +66,8 @@ for i=1:gs1
     fflush(stdout);
 
     %for every location of the new camera
-    for m=1:ns1
-      for n=1:ns2
+    for m=1:size(nX,1)
+      for n=1:size(nX,2)
         x = nX(m,n);
         y = nY(m,n);
         alpha = GetAlpha2D(dmX-x, dmY-y);
@@ -108,8 +102,8 @@ DrawCamera(cam, "k")
 
 
 %for every point in grid
-for i=1:gs1
-  for j=1:gs2
+for i=1:size(gX,1)
+  for j=1:size(gX,2)
 
     %covariance ellipses with cameras in the camsetup are drawn
     X = [gX(i,j);gY(i,j)];
