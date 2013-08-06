@@ -117,7 +117,7 @@ mX,mY,mAlpha
 %%2D
 figure(1); clf;
 hold on
-axis([0 150 -60 60], "equal");
+axis([0 150 -60 70], "equal");
 xlabel("x")
 ylabel("y", 'rotation', 0)
 
@@ -136,23 +136,39 @@ hold off
 
 
 
-figure(1)
+%%2D
+figure(2); clf;
 hold on
+axis([0 150 -60 70], "equal");
+xlabel("x")
+ylabel("y", 'rotation', 0)
+
+DrawCamera(cam, "k")
 DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
+
+%for every point in grid
+for i=1:size(gX,1)
+  for j=1:size(gX,2)
+    if msCovRes(i,j).valid
+      h = my_2D_error_ellipse(10*msCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95, 'style', "k");
+    end
+  end
+end
+
 hold off
 
 
 
 
 %%3D
-figure(2); clf;
+figure(3); clf;
 hold on
 contour(gX,gY,gW, 60);
 axis([0 150 -60 60], "equal");
 DrawCamera(cam, "k")
 hold off
 
-figure(3); clf;
+figure(4); clf;
 meshz(gX,gY,gW);
 axis([0 150 -60 60]);
 xlabel("x")
@@ -162,6 +178,7 @@ ylabel("y")
 %save
 colormap([zeros(63,3) ; ones(1,3)]);
 saveas(figure(1), "figures/covariance_ellipses.eps")
-saveas(figure(2), "figures/contour.eps")
-saveas(figure(3), "figures/meshz.eps")
+saveas(figure(2), "figures/covariance_ellipses_new.eps")
+saveas(figure(3), "figures/contour.eps")
+saveas(figure(4), "figures/meshz.eps")
 
