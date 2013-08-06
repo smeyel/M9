@@ -73,12 +73,9 @@ for i=1:size(gX,1)
         x = nX(m,n);
         y = nY(m,n);
         alpha = GetAlpha2D(dmX-x, dmY-y);
-        saCov_n = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
-        sCovRes_n = CombineGaussians(saCov_n);
-        valid_n = sCovRes_n.valid;
-        C_n = sCovRes_n.C;
-        Ci_n = sCovRes_n.Ci;
-        nW(i,j,m,n) = det(Ci_n);
+        saCov = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
+        nsCovRes(i,j,m,n) = CombineGaussians(saCov);
+        nW(i,j,m,n) = det(nsCovRes(i,j,m,n).Ci);
         ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
       end
     end
