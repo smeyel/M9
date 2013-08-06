@@ -59,8 +59,7 @@ for i=1:size(gX,1)
     Y = gY(i,j);
 
     %resulting covariances
-    saCov = CalculateCovariance(cam, [X;Y]);
-    gsCovRes(i,j) = CombineGaussians(saCov);
+    gsCovRes(i,j) = CalculateResultingCovariance(cam, [X;Y]);
     gW(i,j) = det(gsCovRes(i,j).Ci);
 
 
@@ -74,8 +73,7 @@ for i=1:size(gX,1)
         x = nX(m,n);
         y = nY(m,n);
         alpha = GetAlpha2D(dmX-x, dmY-y);
-        saCov = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
-        nsCovRes(i,j,m,n) = CombineGaussians(saCov);
+        nsCovRes(i,j,m,n) = CalculateResultingCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
         nW(i,j,m,n) = det(nsCovRes(i,j,m,n).Ci);
         ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
       end
