@@ -50,6 +50,9 @@ dmY = sum(sum(dYX .* gY));
 %the location of the new camera
 [nX,nY] = meshgrid(90:1:130, 60:1:60);
 
+%nArea is a little longer to the direction left because of the wrong camera placement
+nArea = [60 60 ; 130 60 ; 130 65 ; 60 65];
+
 
 
 
@@ -159,6 +162,7 @@ DrawCamera(cam)
 DrawCamera(mCam, "r");
 
 drawPolygon(dArea)
+drawPolygon(nArea)
 
 %for every point in grid
 for i=1:size(gX,1)
@@ -185,6 +189,7 @@ DrawCamera(cam)
 DrawCamera(wCam, "g");
 
 drawPolygon(dArea)
+drawPolygon(nArea)
 
 %for every point in grid
 for i=1:size(gX,1)
