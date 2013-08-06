@@ -48,16 +48,16 @@ dmY = sum(sum(dYX .* gY));
 
 %%--- new ---
 %the location of the new camera
-[nX,nY] = meshgrid(90:1:130, 60:1:60);
+[nX,nY] = meshgrid(85:1:135, 60:1:60);
 
-%nArea is a little longer to the direction left because of the wrong camera placement
-nArea = [60 60 ; 130 60 ; 130 65 ; 60 65];
+%nArea is a little higher to the direction up because but the new camera is placed in radial direction to the closest
+nArea = [85 60 ; 135 60 ; 135 65 ; 85 65];
 
 
 
 
 %%--- wrong ---
-wX = 60;
+wX = 135;
 wY = 60;
 wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
 wCam = CreateCamera(wAlpha,[wX;wY]);
