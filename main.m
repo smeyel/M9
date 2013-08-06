@@ -116,27 +116,19 @@ mX,mY,mAlpha
 
 %%2D
 figure(1); clf;
-hold on;
+hold on
 axis([0 150 -60 60], "equal");
 xlabel("x")
 ylabel("y", 'rotation', 0)
 
 DrawCamera(cam, "k")
 
-
 %for every point in grid
 for i=1:size(gX,1)
   for j=1:size(gX,2)
-
-    %covariance ellipses with cameras in the camsetup are drawn
-    X = [gX(i,j);gY(i,j)];
-    sCovRes = gsCovRes(i,j);
-    valid = sCovRes.valid;
-    C = sCovRes.C;
-    if valid
-      h = my_2D_error_ellipse(10*C, X, 'conf', 0.95, 'style', "k");
+    if gsCovRes(i,j).valid
+      h = my_2D_error_ellipse(10*gsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95, 'style', "k");
     end
-
   end
 end
 
