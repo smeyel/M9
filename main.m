@@ -29,6 +29,7 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 
 
 %%--- density ---
+%the density function
 dYX = zeros(size(gX));
 
 dYX(7:9,8:12) = 1/(3*5);
@@ -57,7 +58,7 @@ for i=1:size(gX,1)
     X = gX(i,j);
     Y = gY(i,j);
 
-    %covariance ellipses with cameras in the camsetup are drawn
+    %resulting covariances
     saCov = CalculateCovariance(cam, [X;Y]);
     gsCovRes(i,j) = CombineGaussians(saCov);
     gW(i,j) = det(gsCovRes(i,j).Ci);
