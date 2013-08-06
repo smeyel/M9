@@ -51,6 +51,15 @@ dmY = sum(sum(dYX .* gY));
 
 
 
+%%--- wrong ---
+wX = 60;
+wY = 60;
+wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
+wCam = CreateCamera(wAlpha,[wX;wY]);
+
+
+
+
 %for every point in grid
 for i=1:size(gX,1)
   for j=1:size(gX,2)
@@ -61,6 +70,8 @@ for i=1:size(gX,1)
     %resulting covariances
     gsCovRes(i,j) = CalculateResultingCovariance(cam, [X;Y]);
     gW(i,j) = det(gsCovRes(i,j).Ci);
+
+    wsCovRes(i,j) = CalculateResultingCovariance([cam,wCam], [X;Y]);
 
 
     %progress
@@ -159,15 +170,39 @@ hold off
 
 
 
-%%3D
+%%2D
 figure(3); clf;
+hold on
+axis([0 150 -60 70], "equal");
+xlabel("x")
+ylabel("y", 'rotation', 0)
+
+DrawCamera(cam)
+DrawCamera(wCam, "g");
+
+%for every point in grid
+for i=1:size(gX,1)
+  for j=1:size(gX,2)
+    if wsCovRes(i,j).valid
+      h = my_2D_error_ellipse(10*wsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
+    end
+  end
+end
+
+hold off
+
+
+
+
+%%3D
+figure(4); clf;
 hold on
 contour(gX,gY,gW, 60);
 axis([0 150 -60 60], "equal");
 DrawCamera(cam)
 hold off
 
-figure(4); clf;
+figure(5); clf;
 meshz(gX,gY,gW);
 axis([0 150 -60 60]);
 xlabel("x")
@@ -178,6 +213,7 @@ ylabel("y")
 colormap([zeros(63,3) ; ones(1,3)]);
 saveas(figure(1), "figures/covariance_ellipses.eps")
 saveas(figure(2), "figures/covariance_ellipses_new.eps")
-saveas(figure(3), "figures/contour.eps")
-saveas(figure(4), "figures/meshz.eps")
+saveas(figure(3), "figures/covariance_ellipses_wrong.eps")
+saveas(figure(4), "figures/contour.eps")
+saveas(figure(5), "figures/meshz.eps")
 
