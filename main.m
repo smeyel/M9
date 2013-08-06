@@ -77,6 +77,8 @@ for i=1:size(gX,1)
     gW(i,j) = det(gsCovRes(i,j).Ci);
 
     wsCovRes(i,j) = CalculateResultingCovariance([cam,wCam], [X;Y]);
+    wW(i,j) = det(wsCovRes(i,j).Ci);
+    wdW(i,j) = wW(i,j) * dYX(i,j);
 
 
     %progress
@@ -118,6 +120,8 @@ mCam = CreateCamera(mAlpha,[mX;mY]);
 
 
 msCovRes = nsCovRes(:,:,m1,m2);
+mW = nW(:,:,m1,m2);
+mdW = ndW(:,:,m1,m2);
 
 
 %results
