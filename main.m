@@ -86,6 +86,29 @@ end
 
 
 
+%calculate the best location and orientation for the new camera
+%best means, where it improves the most
+MM1 = sum(ndW, 1);
+MM2 = sum(MM1, 2);
+[MM3,I3] = max(MM2, [], 3);
+[MM4,I4] = max(MM3, [], 4);
+
+m2=I4(1, 1, 1, 1);
+m1=I3(1, 1, 1,m2);
+
+mX = nX(m1,m2);
+mY = nY(m1,m2);
+mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
+
+
+msCovRes = nsCovRes(:,:,m1,m2);
+
+
+%results
+%max indexes
+m1,m2
+%location and orientation values
+mX,mY,mAlpha
 
 
 
@@ -119,19 +142,6 @@ end
 hold off
 
 
-%calculate the best location and orientation for the new camera
-%best means, where it improves the most
-MM1 = sum(ndW, 1);
-MM2 = sum(MM1, 2);
-[MM3,I3] = max(MM2, [], 3);
-[MM4,I4] = max(MM3, [], 4);
-
-m2=I4(1, 1, 1, 1);
-m1=I3(1, 1, 1,m2);
-
-mX = nX(m1,m2);
-mY = nY(m1,m2);
-mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
 
 figure(1)
 hold on
@@ -139,11 +149,6 @@ DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
 hold off
 
 
-%results
-%max indexes
-m1,m2
-%location and orientation values
-mX,mY,mAlpha
 
 
 %%3D
