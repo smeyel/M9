@@ -159,7 +159,7 @@ xlabel("x")
 ylabel("y", 'rotation', 0)
 
 DrawCamera(cam)
-DrawCamera(mCam, "r");
+DrawCamera(mCam, "g");
 
 drawPolygon(dArea)
 drawPolygon(nArea)
@@ -186,7 +186,7 @@ xlabel("x")
 ylabel("y", 'rotation', 0)
 
 DrawCamera(cam)
-DrawCamera(wCam, "g");
+DrawCamera(wCam, "r");
 
 drawPolygon(dArea)
 drawPolygon(nArea)
