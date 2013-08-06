@@ -18,28 +18,29 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 
 
 
+
 %%--- grid ---
 %the accuracy is calculated in this points
+%gX(i,j) is the X with index j
+%gY(i,j) is the Y with index i
 [gX,gY] = meshgrid(20:10:140, -40:10:40);
 
-gs1 = size(gX, 1);
-gs2 = size(gX, 2);
-
-gW = zeros(gs1, gs2);
 
 
 
 %%--- density ---
-ds1 = gs1;
-ds2 = gs2;
-dYX = zeros(ds1, ds2);
+%the density function
+dYX = zeros(size(gX));
 
 dYX(7:9,8:12) = 1/(3*5);
+
+if sum(sum(dYX)) != 1
+  error('dYX is not a valid density function!')
+end
 
 dmX = sum(sum(dYX .* gX));
 dmY = sum(sum(dYX .* gY));
 
-dW = zeros(ds1, ds2);
 
 
 
@@ -47,39 +48,20 @@ dW = zeros(ds1, ds2);
 %the location of the new camera
 [nX,nY] = meshgrid(90:1:130, 60:1:60);
 
-ns1 = size(nX, 1);
-ns2 = size(nX, 2);
-
-nW = zeros(gs1,gs2,ns1,ns2);
-ndW = zeros(gs1,gs2,ns1,ns2);
 
 
-
-
-%%2D
-figure(1); clf;
-hold on;
-axis([0 150 -60 60], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
-
-DrawCamera(cam, "k")
 
 %for every point in grid
-for i=1:gs1
-  for j=1:gs2
+for i=1:size(gX,1)
+  for j=1:size(gX,2)
 
-    %covariance ellipses with cameras in the camsetup are drawn
-    X = [gX(i,j);gY(i,j)];
-    saCov = CalculateCovariance(cam, X);
-    sCovRes = CombineGaussians(saCov);
-    valid = sCovRes.valid;
-    C = sCovRes.C;
-    Ci = sCovRes.Ci;
-    if valid
-      h = my_2D_error_ellipse(10*C, X, 'conf', 0.95, 'style', "k");
-    end
-    gW(i,j) = det(Ci);
+    X = gX(i,j);
+    Y = gY(i,j);
+
+    %resulting covariances
+    saCov = CalculateCovariance(cam, [X;Y]);
+    gsCovRes(i,j) = CombineGaussians(saCov);
+    gW(i,j) = det(gsCovRes(i,j).Ci);
 
 
     %progress
@@ -87,17 +69,14 @@ for i=1:gs1
     fflush(stdout);
 
     %for every location of the new camera
-    for m=1:ns1
-      for n=1:ns2
+    for m=1:size(nX,1)
+      for n=1:size(nX,2)
         x = nX(m,n);
         y = nY(m,n);
         alpha = GetAlpha2D(dmX-x, dmY-y);
-        saCov_n = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], X);
-        sCovRes_n = CombineGaussians(saCov_n);
-        valid_n = sCovRes_n.valid;
-        C_n = sCovRes_n.C;
-        Ci_n = sCovRes_n.Ci;
-        nW(i,j,m,n) = det(Ci_n);
+        saCov = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
+        nsCovRes(i,j,m,n) = CombineGaussians(saCov);
+        nW(i,j,m,n) = det(nsCovRes(i,j,m,n).Ci);
         ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
       end
     end
@@ -105,7 +84,7 @@ for i=1:gs1
   end
 end
 
-hold off
+
 
 
 %calculate the best location and orientation for the new camera
@@ -122,10 +101,8 @@ mX = nX(m1,m2);
 mY = nY(m1,m2);
 mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
 
-figure(1)
-hold on
-DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
-hold off
+
+msCovRes = nsCovRes(:,:,m1,m2);
 
 
 %results
@@ -133,6 +110,38 @@ hold off
 m1,m2
 %location and orientation values
 mX,mY,mAlpha
+
+
+
+
+%%2D
+figure(1); clf;
+hold on
+axis([0 150 -60 60], "equal");
+xlabel("x")
+ylabel("y", 'rotation', 0)
+
+DrawCamera(cam, "k")
+
+%for every point in grid
+for i=1:size(gX,1)
+  for j=1:size(gX,2)
+    if gsCovRes(i,j).valid
+      h = my_2D_error_ellipse(10*gsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95, 'style', "k");
+    end
+  end
+end
+
+hold off
+
+
+
+figure(1)
+hold on
+DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
+hold off
+
+
 
 
 %%3D
