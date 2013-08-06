@@ -56,15 +56,6 @@ ndW = zeros(gs1,gs2,ns1,ns2);
 
 
 
-%%2D
-figure(1); clf;
-hold on;
-axis([0 150 -60 60], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
-
-DrawCamera(cam, "k")
-
 %for every point in grid
 for i=1:gs1
   for j=1:gs2
@@ -72,14 +63,8 @@ for i=1:gs1
     %covariance ellipses with cameras in the camsetup are drawn
     X = [gX(i,j);gY(i,j)];
     saCov = CalculateCovariance(cam, X);
-    sCovRes = CombineGaussians(saCov);
-    valid = sCovRes.valid;
-    C = sCovRes.C;
-    Ci = sCovRes.Ci;
-    if valid
-      h = my_2D_error_ellipse(10*C, X, 'conf', 0.95, 'style', "k");
-    end
-    gW(i,j) = det(Ci);
+    gsCovRes(i,j) = CombineGaussians(saCov);
+    gW(i,j) = det(gsCovRes(i,j).Ci);
 
 
     %progress
@@ -100,6 +85,39 @@ for i=1:gs1
         nW(i,j,m,n) = det(Ci_n);
         ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
       end
+    end
+
+  end
+end
+
+
+
+
+
+
+
+
+%%2D
+figure(1); clf;
+hold on;
+axis([0 150 -60 60], "equal");
+xlabel("x")
+ylabel("y", 'rotation', 0)
+
+DrawCamera(cam, "k")
+
+
+%for every point in grid
+for i=1:gs1
+  for j=1:gs2
+
+    %covariance ellipses with cameras in the camsetup are drawn
+    X = [gX(i,j);gY(i,j)];
+    sCovRes = gsCovRes(i,j);
+    valid = sCovRes.valid;
+    C = sCovRes.C;
+    if valid
+      h = my_2D_error_ellipse(10*C, X, 'conf', 0.95, 'style', "k");
     end
 
   end
