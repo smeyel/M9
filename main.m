@@ -98,6 +98,7 @@ m1=I3(1, 1, 1,m2);
 mX = nX(m1,m2);
 mY = nY(m1,m2);
 mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
+mCam = CreateCamera(mAlpha,[mX;mY]);
 
 
 msCovRes = nsCovRes(:,:,m1,m2);
@@ -142,7 +143,7 @@ xlabel("x")
 ylabel("y", 'rotation', 0)
 
 DrawCamera(cam)
-DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
+DrawCamera(mCam, "r");
 
 %for every point in grid
 for i=1:size(gX,1)
