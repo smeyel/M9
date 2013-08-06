@@ -54,9 +54,11 @@ dmY = sum(sum(dYX .* gY));
 for i=1:size(gX,1)
   for j=1:size(gX,2)
 
+    X = gX(i,j);
+    Y = gY(i,j);
+
     %covariance ellipses with cameras in the camsetup are drawn
-    X = [gX(i,j);gY(i,j)];
-    saCov = CalculateCovariance(cam, X);
+    saCov = CalculateCovariance(cam, [X;Y]);
     gsCovRes(i,j) = CombineGaussians(saCov);
     gW(i,j) = det(gsCovRes(i,j).Ci);
 
@@ -71,7 +73,7 @@ for i=1:size(gX,1)
         x = nX(m,n);
         y = nY(m,n);
         alpha = GetAlpha2D(dmX-x, dmY-y);
-        saCov_n = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], X);
+        saCov_n = CalculateCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
         sCovRes_n = CombineGaussians(saCov_n);
         valid_n = sCovRes_n.valid;
         C_n = sCovRes_n.C;
