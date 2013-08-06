@@ -119,13 +119,13 @@ axis([0 150 -60 70], "equal");
 xlabel("x")
 ylabel("y", 'rotation', 0)
 
-DrawCamera(cam, "k")
+DrawCamera(cam)
 
 %for every point in grid
 for i=1:size(gX,1)
   for j=1:size(gX,2)
     if gsCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*gsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95, 'style', "k");
+      h = my_2D_error_ellipse(10*gsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
     end
   end
 end
@@ -141,14 +141,14 @@ axis([0 150 -60 70], "equal");
 xlabel("x")
 ylabel("y", 'rotation', 0)
 
-DrawCamera(cam, "k")
+DrawCamera(cam)
 DrawCamera(CreateCamera(mAlpha,[mX;mY]), "r");
 
 %for every point in grid
 for i=1:size(gX,1)
   for j=1:size(gX,2)
     if msCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*msCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95, 'style', "k");
+      h = my_2D_error_ellipse(10*msCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
     end
   end
 end
@@ -163,7 +163,7 @@ figure(3); clf;
 hold on
 contour(gX,gY,gW, 60);
 axis([0 150 -60 60], "equal");
-DrawCamera(cam, "k")
+DrawCamera(cam)
 hold off
 
 figure(4); clf;
