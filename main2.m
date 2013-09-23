@@ -15,6 +15,10 @@ Gr = 0;
 Hr = 1000;
 
 
+%preallocation
+gW = zeros(size(gX,1), ...
+           size(gX,2));
+
 %for every point in grid
 for i=1:size(gX,1)
   for j=1:size(gX,2)

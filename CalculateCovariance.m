@@ -6,6 +6,9 @@ function out = CalculateCovariance(cam, X)
 
 global useFoV;
 
+%preallocation
+out(1:length(cam)) = struct('Ci', zeros(2,2), ...
+                            'mu', zeros(2,1));
 
 for i = 1:length(cam)
 
