@@ -176,7 +176,7 @@ axis([0 150 -60 70], 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
+arrayfun(@(c) DrawCamera(c), cam);
 
 %for every point in grid
 for i=1:size(gX,1)
@@ -198,7 +198,7 @@ axis([0 150 -60 70], 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
+arrayfun(@(c) DrawCamera(c), cam);
 DrawCamera(mCam, 'g');
 
 drawPolygon(dArea)
@@ -225,7 +225,7 @@ axis([0 150 -60 70], 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
+arrayfun(@(c) DrawCamera(c), cam);
 DrawCamera(wCam, 'r');
 
 drawPolygon(dArea)
@@ -250,7 +250,7 @@ figure(4); clf;
 hold on
 contour(gX,gY,gW, 60);
 axis([0 150 -60 60], 'equal');
-DrawCamera(cam)
+arrayfun(@(c) DrawCamera(c), cam);
 hold off
 
 figure(5); clf;
