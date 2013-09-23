@@ -4,11 +4,12 @@
 clear
 clc
 
-warning('off', 'Octave:possible-matlab-short-circuit-operator');
+%warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
 myAddPath
 
-global useFoV=false;
+global useFoV;
+useFoV=false;
 
 
 %%--- camera ---
@@ -36,7 +37,7 @@ dYX(7:9,8:12) = 1/(3*5);
 
 dArea = [gX(7,8)-5 gY(7,8)-5 ; gX(7,12)+5 gY(7,12)-5 ; gX(9,12)+5 gY(9,12)+5 ; gX(9,8)-5 gY(9,8)+5];
 
-if sum(sum(dYX)) != 1
+if sum(sum(dYX)) ~= 1
   error('dYX is not a valid density function!')
 end
 
@@ -83,7 +84,8 @@ for i=1:size(gX,1)
 
     %progress
     i,j
-    fflush(stdout);
+    %fflush(stdout);
+    drawnow('update');
 
     %for every location of the new camera
     for m=1:size(nX,1)
@@ -136,9 +138,9 @@ mX,mY,mAlpha
 %%2D
 figure(1); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis([0 150 -60 70], 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
 DrawCamera(cam)
 
@@ -158,12 +160,12 @@ hold off
 %%2D
 figure(2); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis([0 150 -60 70], 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
 DrawCamera(cam)
-DrawCamera(mCam, "g");
+DrawCamera(mCam, 'g');
 
 drawPolygon(dArea)
 drawPolygon(nArea)
@@ -185,12 +187,12 @@ hold off
 %%2D
 figure(3); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis([0 150 -60 70], 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
 DrawCamera(cam)
-DrawCamera(wCam, "r");
+DrawCamera(wCam, 'r');
 
 drawPolygon(dArea)
 drawPolygon(nArea)
@@ -213,22 +215,22 @@ hold off
 figure(4); clf;
 hold on
 contour(gX,gY,gW, 60);
-axis([0 150 -60 60], "equal");
+axis([0 150 -60 60], 'equal');
 DrawCamera(cam)
 hold off
 
 figure(5); clf;
 meshz(gX,gY,gW);
 axis([0 150 -60 60]);
-xlabel("x")
-ylabel("y")
+xlabel('x')
+ylabel('y')
 
 
 %save
 colormap([zeros(63,3) ; ones(1,3)]);
-saveas(figure(1), "figures/covariance_ellipses.eps")
-saveas(figure(2), "figures/covariance_ellipses_new.eps")
-saveas(figure(3), "figures/covariance_ellipses_wrong.eps")
-saveas(figure(4), "figures/contour.eps")
-saveas(figure(5), "figures/meshz.eps")
+saveas(figure(1), 'figures/covariance_ellipses.eps')
+saveas(figure(2), 'figures/covariance_ellipses_new.eps')
+saveas(figure(3), 'figures/covariance_ellipses_wrong.eps')
+saveas(figure(4), 'figures/contour.eps')
+saveas(figure(5), 'figures/meshz.eps')
 

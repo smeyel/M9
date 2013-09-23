@@ -15,7 +15,10 @@ for i = 1:length(cam)
   %field of view contains the point
   if useFoV
     contains = true;
-    for [val, key] = cam(i).normal_vectors
+    S = cam(i).normal_vectors;
+    SNames = fieldnames(S);
+    for loopIndex = 1:numel(SNames)
+      val = S.(SNames{loopIndex});
       if (X-cam(i).pos)' * val <= 0
         contains = false;
         break;

@@ -1,9 +1,15 @@
-function cam = CreateCamera(ori=0, pos=zeros(2,1))
+function cam = CreateCamera(ori, pos)
 
 %R: Rotation matrix, world <= camera, 2x2 matrix
 %T: Translation matrix, world <= camera, 2x1 vector
 %cam: camera struct
 
+
+if(nargin < 1)
+    ori=0;
+elseif(nargin < 2)
+    pos=zeros(2,1);
+end
 
 cam.ori = ori;
 cam.pos = pos;

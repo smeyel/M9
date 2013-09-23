@@ -4,3 +4,6 @@
 #octave pictures
 *.eps
 
+#matlab asv files
+*.asv
+

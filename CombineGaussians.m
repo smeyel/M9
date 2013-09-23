@@ -13,8 +13,8 @@ out.mu = zeros();
 mmu = zeros();
 
 for i = 1:length(in);
-  out.Ci += in(i).Ci;
-  mmu += in(i).Ci * in(i).mu;
+  out.Ci = out.Ci + in(i).Ci;
+  mmu = mmu + in(i).Ci * in(i).mu;
 end
 
 out.valid = all(eig(out.Ci) > 1e-10);

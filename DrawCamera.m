@@ -1,10 +1,14 @@
-function DrawCamera(cam, color="b")
+function DrawCamera(cam, color)
 
 %cam: nx1 struct array of camera structs
 
 global useFoV;
 
 default_center_circle_radius = 2;
+
+if(nargin < 2)
+    color='b';
+end
 
 for i = 1:length(cam)
 
@@ -22,13 +26,13 @@ for i = 1:length(cam)
     %direction low
     dl = Rot2D(pi/2) * cam(i).normal_vectors.low;
     if(dl' * nf < 0)
-      dl *= -1;
+      dl = -dl;
     end
 
     %direction high
     dh = Rot2D(pi/2) * cam(i).normal_vectors.high;
     if(dh' * nf < 0)
-      dh *= -1;
+      dh = -dh;
     end
 
     drawRay([c;dl]', color);
