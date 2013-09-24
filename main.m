@@ -35,7 +35,10 @@ dYX = zeros(size(gX));
 
 dYX(7:9,8:12) = 1/(3*5);
 
-dArea = [gX(7,8)-5 gY(7,8)-5 ; gX(7,12)+5 gY(7,12)-5 ; gX(9,12)+5 gY(9,12)+5 ; gX(9,8)-5 gY(9,8)+5];
+dArea = [gX(7,8)-5  gY(7,8)-5 ; ...
+         gX(7,12)+5 gY(7,12)-5 ; ...
+         gX(9,12)+5 gY(9,12)+5 ; ...
+         gX(9,8)-5  gY(9,8)+5];
 
 if sum(sum(dYX)) ~= 1
   error('dYX is not a valid density function!')
