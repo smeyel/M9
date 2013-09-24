@@ -67,78 +67,24 @@ wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
 wCam = CreateCamera(wAlpha,[wX;wY]);
 
 
-%preallocation
-gsCovRes(size(gX,1), ...
-         size(gX,2)) = struct('valid', false, ...
-                              'C', zeros(2,2), ...
-                              'Ci', zeros(2,2), ...
-                              'mu', zeros(2,1));
-gW = zeros(size(gX,1), ...
-           size(gX,2));
 
-wsCovRes(size(gX,1), ...
-         size(gX,2)) = struct('valid', false, ...
-                              'C', zeros(2,2), ...
-                              'Ci', zeros(2,2), ...
-                              'mu', zeros(2,1));
-wW = zeros(size(gX,1), ...
-           size(gX,2));
-wdW = zeros(size(gX,1), ...
-            size(gX,2));
+%--- calculations ---
+gsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance(cam, [gx;gy]), gX, gY);
+gW = arrayfun(@(covres) det(covres.Ci), gsCovRes);
 
-nsCovRes(size(gX,1), ...
-         size(gX,2), ...
-         size(nX,1), ...
-         size(nX,2)) = struct('valid', false,...
-                              'C', zeros(2,2), ...
-                              'Ci', zeros(2,2), ...
-                              'mu', zeros(2,1));
-nW = zeros(size(gX,1), ...
-           size(gX,2), ...
-           size(nX,1), ...
-           size(nX,2));
-ndW = zeros(size(gX,1), ...
-            size(gX,2), ...
-            size(nX,1), ...
-            size(nX,2));
+wsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance([cam,wCam], [gx;gy]), gX, gY);
+wW = arrayfun(@(covres) det(covres.Ci), wsCovRes);
+wdW = wW .* dYX;
 
-
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-
-    X = gX(i,j);
-    Y = gY(i,j);
-
-    %resulting covariances
-    gsCovRes(i,j) = CalculateResultingCovariance(cam, [X;Y]);
-    gW(i,j) = det(gsCovRes(i,j).Ci);
-
-    wsCovRes(i,j) = CalculateResultingCovariance([cam,wCam], [X;Y]);
-    wW(i,j) = det(wsCovRes(i,j).Ci);
-    wdW(i,j) = wW(i,j) * dYX(i,j);
-
-
-    %progress
-    i,j
-    %fflush(stdout);
-    drawnow('update');
-
-    %for every location of the new camera
-    for m=1:size(nX,1)
-      for n=1:size(nX,2)
-        x = nX(m,n);
-        y = nY(m,n);
-        alpha = GetAlpha2D(dmX-x, dmY-y);
-        nsCovRes(i,j,m,n) = CalculateResultingCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
-        nW(i,j,m,n) = det(nsCovRes(i,j,m,n).Ci);
-        ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
-      end
-    end
-
-  end
-end
-
+ngX = repmat(reshape(gX, [size(gX), 1, 1]), [1, 1, size(nX)]);
+ngY = repmat(reshape(gY, [size(gY), 1, 1]), [1, 1, size(nY)]);
+ndYX = repmat(reshape(dYX, [size(dYX), 1, 1]), [1, 1, size(nX)]);
+nnX = repmat(reshape(nX, [1, 1, size(nX)]), [size(gX), 1, 1]);
+nnY = repmat(reshape(nY, [1, 1, size(nY)]), [size(gY), 1, 1]);
+nsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(GetAlpha2D(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
+    ngX, ngY, nnX, nnY);
+nW = arrayfun(@(covres) det(covres.Ci), nsCovRes);
+ndW = nW .* ndYX;
 
 
 
@@ -180,18 +126,11 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 
 arrayfun(@(c) DrawCamera(c), cam);
-
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-    if gsCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*gsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
-    end
-  end
-end
+gv = [gsCovRes.valid];
+arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
+    gsCovRes(gv), gX(gv), gY(gv));
 
 hold off
-
 
 
 %%2D
@@ -207,14 +146,9 @@ DrawCamera(mCam, 'g');
 drawPolygon(dArea)
 drawPolygon(nArea)
 
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-    if msCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*msCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
-    end
-  end
-end
+mv = [gsCovRes.valid];
+arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
+    msCovRes(mv), gX(mv), gY(mv));
 
 hold off
 
@@ -234,14 +168,9 @@ DrawCamera(wCam, 'r');
 drawPolygon(dArea)
 drawPolygon(nArea)
 
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-    if wsCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*wsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
-    end
-  end
-end
+wv = [gsCovRes.valid];
+arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
+    wsCovRes(wv), gX(wv), gY(wv));
 
 hold off
 
