@@ -44,10 +44,15 @@ for i = 1:length(cam)
   Ci = [ 0     0    ;
          0  1/sig^2 ] ;
 
+  %cinti2013 conference article: two cameras, one observed point, figure
+  Ci_kamu = [ 0.01/sig^2     0    ;
+                    0     1/sig^2 ] ;
+
   %Ci <= camera <= world
   Rot = Rot2D(-alfa) * cam(i).R;
 
   out(i).Ci = Rot' * Ci * Rot;
+  out(i).Ci_kamu = Rot' * Ci_kamu * Rot;
   out(i).mu = X;
 
 end
