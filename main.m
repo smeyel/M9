@@ -35,10 +35,12 @@ dYX = zeros(size(gX));
 
 dYX(7:9,8:12) = 1/(3*5);
 
-dArea = [gX(7,8)-5  gY(7,8)-5 ; ...
-         gX(7,12)+5 gY(7,12)-5 ; ...
-         gX(9,12)+5 gY(9,12)+5 ; ...
-         gX(9,8)-5  gY(9,8)+5];
+rx = (max(max(gX)) - min(min(gX))) / size(gX,2) / 2;
+ry = (max(max(gY)) - min(min(gY))) / size(gY,1) / 2;
+dArea = [min(min(gX(dYX>0)))-rx min(min(gY(dYX>0)))-ry ; ...
+         max(max(gX(dYX>0)))+rx min(min(gY(dYX>0)))-ry ; ...
+         max(max(gX(dYX>0)))+rx max(max(gY(dYX>0)))+ry ; ...
+         min(min(gX(dYX>0)))-rx max(max(gY(dYX>0)))+ry];
 
 if sum(sum(dYX)) ~= 1
   error('dYX is not a valid density function!')
@@ -54,15 +56,17 @@ dmY = sum(sum(dYX .* gY));
 %the location of the new camera
 [nX,nY] = meshgrid(85:1:135, 60:1:60);
 
-%nArea is a little higher to the direction up because but the new camera is placed in radial direction to the closest
-nArea = [85 60 ; 135 60 ; 135 65 ; 85 65];
+nArea = [min(min(nX)) min(min(nY)) ; ...
+         max(max(nX)) min(min(nY)) ; ...
+         max(max(nX)) max(max(nY)) ; ...
+         min(min(nX)) max(max(nY))];
 
 
 
 
 %%--- wrong ---
-wX = 135;
-wY = 60;
+wX = max(max(nX));
+wY = min(min(nY));
 wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
 wCam = CreateCamera(wAlpha,[wX;wY]);
 
