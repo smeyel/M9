@@ -89,18 +89,16 @@ nsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamer
     ngX, ngY, nnX, nnY);
 nW = arrayfun(@(covres) det(covres.Ci), nsCovRes);
 ndW = nW .* ndYX;
+nsW = squeeze(sum(sum(ndW, 1), 2));
 
 
 
 %calculate the best location and orientation for the new camera
 %best means, where it improves the most
-MM1 = sum(ndW, 1);
-MM2 = sum(MM1, 2);
-[MM3,I3] = max(MM2, [], 3);
-[MM4,I4] = max(MM3, [], 4);
-
-m2=I4(1, 1, 1, 1);
-m1=I3(1, 1, 1,m2);
+[MM1,I1] = max(nsW, [], 1);
+[MM2,I2] = max(MM1, [], 2);
+m2=I2(1, 1);
+m1=I1(1, m2);
 
 mX = nX(m1,m2);
 mY = nY(m1,m2);
