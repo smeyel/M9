@@ -12,6 +12,11 @@ global useFoV;
 useFoV=false;
 
 
+%%--- area ---
+area = [0 150 -60 60];
+area2 = [0 150 -60 70];
+
+
 %%--- camera ---
 %the location and oreientation of the cameras
 cam(1) = CreateCamera(-pi/4, [10;50]);
@@ -123,7 +128,7 @@ mX,mY,mAlpha
 %%2D
 figure(1); clf;
 hold on
-axis([0 150 -60 70], 'equal');
+axis(area2, 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
@@ -138,7 +143,7 @@ hold off
 %%2D
 figure(2); clf;
 hold on
-axis([0 150 -60 70], 'equal');
+axis(area2, 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
@@ -160,7 +165,7 @@ hold off
 %%2D
 figure(3); clf;
 hold on
-axis([0 150 -60 70], 'equal');
+axis(area2, 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
@@ -183,13 +188,13 @@ hold off
 figure(4); clf;
 hold on
 contour(gX,gY,gW, 60);
-axis([0 150 -60 60], 'equal');
+axis(area, 'equal');
 arrayfun(@(c) DrawCamera(c), cam);
 hold off
 
 figure(5); clf;
 meshz(gX,gY,gW);
-axis([0 150 -60 60]);
+axis(area);
 xlabel('x')
 ylabel('y')
 
