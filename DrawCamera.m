@@ -1,45 +1,45 @@
-function DrawCamera(cam, color="b")
+function DrawCamera(cam, color)
 
-%cam: nx1 struct array of camera structs
+%cam: camera struct
 
 global useFoV;
 
 default_center_circle_radius = 2;
 
-for i = 1:length(cam)
+if(nargin < 2)
+    color='b';
+end
 
-  p = circleToPolygon([cam(i).pos ; default_center_circle_radius]);
-  fill(p(:,1), p(:,2), color);
+p = circleToPolygon([cam.pos ; default_center_circle_radius]);
+fill(p(:,1), p(:,2), color);
 
-  %center
-  c = cam(i).pos;
+%center
+c = cam.pos;
 
-  %normal vector for front
-  nf = cam(i).normal_vectors.front;
+%normal vector for front
+nf = cam.normal_vectors.front;
 
-  if useFoV
+if useFoV
 
-    %direction low
-    dl = Rot2D(pi/2) * cam(i).normal_vectors.low;
-    if(dl' * nf < 0)
-      dl *= -1;
-    end
-
-    %direction high
-    dh = Rot2D(pi/2) * cam(i).normal_vectors.high;
-    if(dh' * nf < 0)
-      dh *= -1;
-    end
-
-    drawRay([c;dl]', color);
-    drawRay([c;dh]', color);
-
-  else
-
-    l = 10; %length
-    plot([c(1) c(1)+l*nf(1)], [c(2) c(2)+l*nf(2)], color)
-
+  %direction low
+  dl = Rot2D(pi/2) * cam.normal_vectors.low;
+  if(dl' * nf < 0)
+    dl = -dl;
   end
+
+  %direction high
+  dh = Rot2D(pi/2) * cam.normal_vectors.high;
+  if(dh' * nf < 0)
+    dh = -dh;
+  end
+
+  drawRay([c;dl]', color);
+  drawRay([c;dh]', color);
+
+else
+
+  l = 10; %length
+  plot([c(1) c(1)+l*nf(1)], [c(2) c(2)+l*nf(2)], color)
 
 end
 

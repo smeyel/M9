@@ -4,17 +4,23 @@
 clear
 clc
 
-warning('off', 'Octave:possible-matlab-short-circuit-operator');
+%warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
 myAddPath
 
-global useFoV=false;
+global useFoV;
+useFoV=false;
+
+
+%%--- area ---
+area = [0 150 -60 60];
+area2 = [0 150 -60 70];
 
 
 %%--- camera ---
 %the location and oreientation of the cameras
-cam(1) = CreateCamera(-pi/4, [10;50]);
-cam(2) = CreateCamera(pi/4, [10;-50]);
+cam(1) = CreateCamera(-pi/4, [10;10]);
+cam(2) = CreateCamera(pi/4, [10;-10]);
 
 
 
@@ -23,7 +29,7 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 %the accuracy is calculated in this points
 %gX(i,j) is the X with index j
 %gY(i,j) is the Y with index i
-[gX,gY] = meshgrid(20:10:140, -40:10:40);
+[gX,gY] = meshgrid(40:10:60, -10:10:10);
 
 
 
@@ -32,11 +38,17 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 %the density function
 dYX = zeros(size(gX));
 
-dYX(7:9,8:12) = 1/(3*5);
+%uniform
+dYX(:) = 1/(size(gX,1)*size(gX,2));
 
-dArea = [gX(7,8)-5 gY(7,8)-5 ; gX(7,12)+5 gY(7,12)-5 ; gX(9,12)+5 gY(9,12)+5 ; gX(9,8)-5 gY(9,8)+5];
+rx = (max(max(gX)) - min(min(gX))) / size(gX,2) / 2;
+ry = (max(max(gY)) - min(min(gY))) / size(gY,1) / 2;
+dArea = [min(min(gX(dYX>0)))-rx min(min(gY(dYX>0)))-ry ; ...
+         max(max(gX(dYX>0)))+rx min(min(gY(dYX>0)))-ry ; ...
+         max(max(gX(dYX>0)))+rx max(max(gY(dYX>0)))+ry ; ...
+         min(min(gX(dYX>0)))-rx max(max(gY(dYX>0)))+ry];
 
-if sum(sum(dYX)) != 1
+if sum(sum(dYX)) ~= 1
   error('dYX is not a valid density function!')
 end
 
@@ -48,70 +60,51 @@ dmY = sum(sum(dYX .* gY));
 
 %%--- new ---
 %the location of the new camera
-[nX,nY] = meshgrid(85:1:135, 60:1:60);
+[nX,nY] = meshgrid(85:1:100, -50:1:50);
 
-%nArea is a little higher to the direction up because but the new camera is placed in radial direction to the closest
-nArea = [85 60 ; 135 60 ; 135 65 ; 85 65];
+nArea = [min(min(nX)) min(min(nY)) ; ...
+         max(max(nX)) min(min(nY)) ; ...
+         max(max(nX)) max(max(nY)) ; ...
+         min(min(nX)) max(max(nY))];
 
 
 
 
 %%--- wrong ---
-wX = 135;
-wY = 60;
+wX = max(max(nX));
+wY = min(min(nY));
 wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
 wCam = CreateCamera(wAlpha,[wX;wY]);
 
 
 
+%--- calculations ---
+gsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance(cam, [gx;gy]), gX, gY);
+gW = arrayfun(@(covres) det(covres.Ci), gsCovRes);
 
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
+wsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance([cam,wCam], [gx;gy]), gX, gY);
+wW = arrayfun(@(covres) det(covres.Ci), wsCovRes);
+wdW = wW .* dYX;
 
-    X = gX(i,j);
-    Y = gY(i,j);
-
-    %resulting covariances
-    gsCovRes(i,j) = CalculateResultingCovariance(cam, [X;Y]);
-    gW(i,j) = det(gsCovRes(i,j).Ci);
-
-    wsCovRes(i,j) = CalculateResultingCovariance([cam,wCam], [X;Y]);
-    wW(i,j) = det(wsCovRes(i,j).Ci);
-    wdW(i,j) = wW(i,j) * dYX(i,j);
-
-
-    %progress
-    i,j
-    fflush(stdout);
-
-    %for every location of the new camera
-    for m=1:size(nX,1)
-      for n=1:size(nX,2)
-        x = nX(m,n);
-        y = nY(m,n);
-        alpha = GetAlpha2D(dmX-x, dmY-y);
-        nsCovRes(i,j,m,n) = CalculateResultingCovariance([cam,CreateCamera(alpha,[x;y])], [X;Y]);
-        nW(i,j,m,n) = det(nsCovRes(i,j,m,n).Ci);
-        ndW(i,j,m,n) = nW(i,j,m,n) * dYX(i,j);
-      end
-    end
-
-  end
-end
-
+ngX = repmat(reshape(gX, [size(gX), 1, 1]), [1, 1, size(nX)]);
+ngY = repmat(reshape(gY, [size(gY), 1, 1]), [1, 1, size(nY)]);
+ndYX = repmat(reshape(dYX, [size(dYX), 1, 1]), [1, 1, size(nX)]);
+nnX = repmat(reshape(nX, [1, 1, size(nX)]), [size(gX), 1, 1]);
+nnY = repmat(reshape(nY, [1, 1, size(nY)]), [size(gY), 1, 1]);
+nsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(GetAlpha2D(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
+    ngX, ngY, nnX, nnY);
+nW = arrayfun(@(covres) det(covres.Ci), nsCovRes);
+ndW = nW .* ndYX;
+nsW = squeeze(sum(sum(ndW, 1), 2));
 
 
 
 %calculate the best location and orientation for the new camera
 %best means, where it improves the most
-MM1 = sum(ndW, 1);
-MM2 = sum(MM1, 2);
-[MM3,I3] = max(MM2, [], 3);
-[MM4,I4] = max(MM3, [], 4);
-
-m2=I4(1, 1, 1, 1);
-m1=I3(1, 1, 1,m2);
+[MM1,I1] = max(nsW, [], 1);
+[MM2,I2] = max(MM1, [], 2);
+m2=I2(1, 1);
+m1=I1(1, m2);
 
 mX = nX(m1,m2);
 mY = nY(m1,m2);
@@ -136,46 +129,34 @@ mX,mY,mAlpha
 %%2D
 figure(1); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis(area2, 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
-
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-    if gsCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*gsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
-    end
-  end
-end
+arrayfun(@(c) DrawCamera(c), cam);
+gv = [gsCovRes.valid];
+arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
+    gsCovRes(gv), gX(gv), gY(gv));
 
 hold off
-
 
 
 %%2D
 figure(2); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis(area2, 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
-DrawCamera(mCam, "g");
+arrayfun(@(c) DrawCamera(c), cam);
+DrawCamera(mCam, 'g');
 
 drawPolygon(dArea)
 drawPolygon(nArea)
 
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-    if msCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*msCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
-    end
-  end
-end
+mv = [gsCovRes.valid];
+arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
+    msCovRes(mv), gX(mv), gY(mv));
 
 hold off
 
@@ -185,24 +166,19 @@ hold off
 %%2D
 figure(3); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis(area2, 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
-DrawCamera(wCam, "r");
+arrayfun(@(c) DrawCamera(c), cam);
+DrawCamera(wCam, 'r');
 
 drawPolygon(dArea)
 drawPolygon(nArea)
 
-%for every point in grid
-for i=1:size(gX,1)
-  for j=1:size(gX,2)
-    if wsCovRes(i,j).valid
-      h = my_2D_error_ellipse(10*wsCovRes(i,j).C, [gX(i,j);gY(i,j)], 'conf', 0.95);
-    end
-  end
-end
+wv = [gsCovRes.valid];
+arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
+    wsCovRes(wv), gX(wv), gY(wv));
 
 hold off
 
@@ -212,23 +188,23 @@ hold off
 %%3D
 figure(4); clf;
 hold on
-contour(gX,gY,gW, 60);
-axis([0 150 -60 60], "equal");
-DrawCamera(cam)
+contour(nX,nY,nsW, 60);
+axis(area2, 'equal');
+arrayfun(@(c) DrawCamera(c), cam);
 hold off
 
 figure(5); clf;
-meshz(gX,gY,gW);
-axis([0 150 -60 60]);
-xlabel("x")
-ylabel("y")
+meshz(nX,nY,nsW);
+axis(area2);
+xlabel('x')
+ylabel('y')
 
 
 %save
 colormap([zeros(63,3) ; ones(1,3)]);
-saveas(figure(1), "figures/covariance_ellipses.eps")
-saveas(figure(2), "figures/covariance_ellipses_new.eps")
-saveas(figure(3), "figures/covariance_ellipses_wrong.eps")
-saveas(figure(4), "figures/contour.eps")
-saveas(figure(5), "figures/meshz.eps")
+saveas(figure(1), 'figures/covariance_ellipses.eps')
+saveas(figure(2), 'figures/covariance_ellipses_new.eps')
+saveas(figure(3), 'figures/covariance_ellipses_wrong.eps')
+saveas(figure(4), 'figures/contour.eps')
+saveas(figure(5), 'figures/meshz.eps')
 
