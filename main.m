@@ -19,8 +19,8 @@ area2 = [0 150 -60 70];
 
 %%--- camera ---
 %the location and oreientation of the cameras
-cam(1) = CreateCamera(-pi/4, [10;50]);
-cam(2) = CreateCamera(pi/4, [10;-50]);
+cam(1) = CreateCamera(-pi/4, [10;10]);
+cam(2) = CreateCamera(pi/4, [10;-10]);
 
 
 
@@ -29,7 +29,7 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 %the accuracy is calculated in this points
 %gX(i,j) is the X with index j
 %gY(i,j) is the Y with index i
-[gX,gY] = meshgrid(20:10:140, -40:10:40);
+[gX,gY] = meshgrid(40:10:60, -10:10:10);
 
 
 
@@ -38,7 +38,8 @@ cam(2) = CreateCamera(pi/4, [10;-50]);
 %the density function
 dYX = zeros(size(gX));
 
-dYX(7:9,8:12) = 1/(3*5);
+%uniform
+dYX(:) = 1/(size(gX,1)*size(gX,2));
 
 rx = (max(max(gX)) - min(min(gX))) / size(gX,2) / 2;
 ry = (max(max(gY)) - min(min(gY))) / size(gY,1) / 2;
@@ -59,7 +60,7 @@ dmY = sum(sum(dYX .* gY));
 
 %%--- new ---
 %the location of the new camera
-[nX,nY] = meshgrid(85:1:135, 60:1:60);
+[nX,nY] = meshgrid(85:1:100, -50:1:50);
 
 nArea = [min(min(nX)) min(min(nY)) ; ...
          max(max(nX)) min(min(nY)) ; ...
@@ -187,14 +188,14 @@ hold off
 %%3D
 figure(4); clf;
 hold on
-contour(gX,gY,gW, 60);
-axis(area, 'equal');
+contour(nX,nY,nsW, 60);
+axis(area2, 'equal');
 arrayfun(@(c) DrawCamera(c), cam);
 hold off
 
 figure(5); clf;
-meshz(gX,gY,gW);
-axis(area);
+meshz(nX,nY,nsW);
+axis(area2);
 xlabel('x')
 ylabel('y')
 
