@@ -51,6 +51,6 @@ Ci_kamu = [ 0.01/sig^2     0    ;
 Rot = Rot2D(-alfa) * cam.R;
 
 out.Ci = Rot' * Ci * Rot;
-out(i).Ci_kamu = Rot' * Ci_kamu * Rot;
+out.Ci_kamu = Rot' * Ci_kamu * Rot;
 out.mu = X;
 
