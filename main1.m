@@ -11,6 +11,7 @@ function [] = main1()
 
 %% preparation
 
+close all
 clear
 clc
 
@@ -48,7 +49,8 @@ cam(2) = CreateCamera(GetAlpha2D(eX-cX2, eY-cY2), [cX2;cY2]);
 csCovRes = arrayfun(@(camera) CalculateCovariance(camera, [eX;eY]), cam);
 esCovRes = CalculateResultingCovariance(cam, [eX;eY]);
 
-figure(1); clf;
+%figure
+fig_covariance_ellipses_one = figure; clf;
 hold on
 axis(displayArea, 'equal');
 xlabel('x')
@@ -66,4 +68,4 @@ hold off
 
 
 %% save figures
-saveas(figure(1), 'figures/covariance_ellipses_one.eps')
+saveas(fig_covariance_ellipses_one, 'figures/covariance_ellipses_one.eps')

@@ -21,6 +21,7 @@ function [] = main()
 
 %% preparation
 
+close all
 clear
 clc
 
@@ -108,7 +109,8 @@ wCam = CreateCamera(wAlpha,[wX;wY]);
 gsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance(cam, [gx;gy]), gX, gY);
 gW = arrayfun(@(covres) det(covres.Ci), gsCovRes);
 
-figure(1); clf;
+%figure
+fig_covariance_ellipses = figure; clf;
 hold on
 axis(displayArea, 'equal');
 xlabel('x')
@@ -137,14 +139,16 @@ rngW = arrayfun(@(covres) det(covres.Ci), rngsCovRes);
 rngdW = rngW .* rdYX;
 nW = squeeze(sum(sum(rngdW, 1), 2));
 
-figure(4); clf;
+%figure
+fig_contour = figure; clf;
 hold on
 contour(nX,nY,nW, 60);
 axis(displayArea, 'equal');
 arrayfun(@(c) DrawCamera(c), cam);
 hold off
 
-figure(5); clf;
+%figure
+fig_meshz = figure; clf;
 meshz(nX,nY,nW);
 axis(displayArea);
 xlabel('x')
@@ -169,7 +173,8 @@ mgsCovRes = rngsCovRes(:,:,m1,m2);
 mgW = rngW(:,:,m1,m2);
 mgdW = rngdW(:,:,m1,m2);
 
-figure(2); clf;
+%figure
+fig_covariance_ellipses_new = figure; clf;
 hold on
 axis(displayArea, 'equal');
 xlabel('x')
@@ -194,7 +199,8 @@ wgsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance([cam,wCam], [gx;gy]),
 wgW = arrayfun(@(covres) det(covres.Ci), wgsCovRes);
 wgdW = wgW .* dYX;
 
-figure(3); clf;
+%figure
+fig_covariance_ellipses_wrong = figure; clf;
 hold on
 axis(displayArea, 'equal');
 xlabel('x')
@@ -214,8 +220,8 @@ hold off
 
 
 %% save figures
-saveas(figure(1), 'figures/covariance_ellipses.eps')
-saveas(figure(2), 'figures/covariance_ellipses_new.eps')
-saveas(figure(3), 'figures/covariance_ellipses_wrong.eps')
-saveas(figure(4), 'figures/contour.eps')
-saveas(figure(5), 'figures/meshz.eps')
+saveas(fig_covariance_ellipses, 'figures/covariance_ellipses.eps')
+saveas(fig_contour, 'figures/contour.eps')
+saveas(fig_meshz, 'figures/meshz.eps')
+saveas(fig_covariance_ellipses_new, 'figures/covariance_ellipses_new.eps')
+saveas(fig_covariance_ellipses_wrong, 'figures/covariance_ellipses_wrong.eps')

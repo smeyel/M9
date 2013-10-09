@@ -11,6 +11,7 @@ function [] = main2()
 
 %% preparation
 
+close all
 clear
 clc
 
@@ -32,7 +33,8 @@ useFoV=false;
  
 nW = (-1) * arrayfun(@(nx,ny) myfunc([nx;ny]), nX, nY);
 
-figure(1); clf;
+%figure
+fig_contour_add_one_camera = figure; clf;
 contour(nX,nY,nW,900:10:1100);
 axis('equal');
 xlabel('x');
@@ -59,7 +61,8 @@ oArea = [minX minY ; ...
          maxX maxY ; ...
          maxX minY];
 
-figure(1)
+%figure
+figure(fig_contour_add_one_camera)
 hold on
 drawPolygon(oArea)
 plot(x(1), x(2), 'r*')
@@ -67,7 +70,7 @@ hold off
 
 
 %% save figures
-saveas(figure(1), 'figures/contour_add_one_camera.eps')
+saveas(fig_contour_add_one_camera, 'figures/contour_add_one_camera.eps')
 
 
 function f = myfunc(x)
