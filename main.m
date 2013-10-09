@@ -1,76 +1,100 @@
+function [] = main()
 
-%file for trying the actual problem
+% file for trying the actual problem
+% Wellnes with specific camera configuration
+% determination of the position of the new camera
+% optimal and not optimal placement of the new camera
 
+
+%% notes
+
+% single letters in variable names:
+% g - grid
+% s - struct
+% d - density
+% r - reshaped
+% n - new
+% m - max (optimal)
+% w - wring (not optimal)
+% v - valid
+
+
+%% preparation
+
+close all
 clear
 clc
 
-%warning('off', 'Octave:possible-matlab-short-circuit-operator');
-
 myAddPath
+
+%colormap([zeros(63,3) ; ones(1,3)]);
+%warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
 global useFoV;
 useFoV=false;
 
 
-%%--- area ---
-area = [0 150 -60 60];
-area2 = [0 150 -60 70];
+%% local variable definitions
+
+% --- displayArea ---
+displayArea = [0 150 -60 70];
 
 
-%%--- camera ---
+% --- camera ---
 %the location and oreientation of the cameras
 cam(1) = CreateCamera(-pi/4, [10;10]);
 cam(2) = CreateCamera(pi/4, [10;-10]);
 
 
-
-
-%%--- grid ---
-%the accuracy is calculated in this points
+% --- grid ---
+%the localization accuracy is calculated in this points
 %gX(i,j) is the X with index j
 %gY(i,j) is the Y with index i
 [gX,gY] = meshgrid(40:10:60, -10:10:10);
 
+%grid step
+gsx = (max(max(gX)) - min(min(gX))) / (size(gX,2)-1);
+gsy = (max(max(gY)) - min(min(gY))) / (size(gY,1)-1);
 
 
-
-%%--- density ---
+% --- density ---
 %the density function
 dYX = zeros(size(gX));
 
-%uniform
+% uniform distribution
 dYX(:) = 1/(size(gX,1)*size(gX,2));
-
-rx = (max(max(gX)) - min(min(gX))) / size(gX,2) / 2;
-ry = (max(max(gY)) - min(min(gY))) / size(gY,1) / 2;
-dArea = [min(min(gX(dYX>0)))-rx min(min(gY(dYX>0)))-ry ; ...
-         max(max(gX(dYX>0)))+rx min(min(gY(dYX>0)))-ry ; ...
-         max(max(gX(dYX>0)))+rx max(max(gY(dYX>0)))+ry ; ...
-         min(min(gX(dYX>0)))-rx max(max(gY(dYX>0)))+ry];
 
 if sum(sum(dYX)) ~= 1
   error('dYX is not a valid density function!')
 end
 
+%the expectation (mean) of the density function
 dmX = sum(sum(dYX .* gX));
 dmY = sum(sum(dYX .* gY));
 
+%area of the density function, displayed
+%rectangle increased with the step size
+dArea = [min(min(gX(dYX>0)))-gsx/2 min(min(gY(dYX>0)))-gsy/2 ; ...
+         max(max(gX(dYX>0)))+gsx/2 min(min(gY(dYX>0)))-gsy/2 ; ...
+         max(max(gX(dYX>0)))+gsx/2 max(max(gY(dYX>0)))+gsy/2 ; ...
+         min(min(gX(dYX>0)))-gsx/2 max(max(gY(dYX>0)))+gsy/2];
 
 
-
-%%--- new ---
+% --- new ---
 %the location of the new camera
 [nX,nY] = meshgrid(85:1:100, -50:1:50);
 
+%area of the new camera placement, displayed
+%rectangle
 nArea = [min(min(nX)) min(min(nY)) ; ...
          max(max(nX)) min(min(nY)) ; ...
          max(max(nX)) max(max(nY)) ; ...
          min(min(nX)) max(max(nY))];
 
 
-
-
-%%--- wrong ---
+% --- wrong ---
+%wrong camera placement, not optimal position
+%at one of the corners of the new camera rectangle
 wX = max(max(nX));
 wY = min(min(nY));
 wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
@@ -78,58 +102,17 @@ wCam = CreateCamera(wAlpha,[wX;wY]);
 
 
 
-%--- calculations ---
+
+
+%% Wellness on the grid
+
 gsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance(cam, [gx;gy]), gX, gY);
 gW = arrayfun(@(covres) det(covres.Ci), gsCovRes);
 
-wsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance([cam,wCam], [gx;gy]), gX, gY);
-wW = arrayfun(@(covres) det(covres.Ci), wsCovRes);
-wdW = wW .* dYX;
-
-ngX = repmat(reshape(gX, [size(gX), 1, 1]), [1, 1, size(nX)]);
-ngY = repmat(reshape(gY, [size(gY), 1, 1]), [1, 1, size(nY)]);
-ndYX = repmat(reshape(dYX, [size(dYX), 1, 1]), [1, 1, size(nX)]);
-nnX = repmat(reshape(nX, [1, 1, size(nX)]), [size(gX), 1, 1]);
-nnY = repmat(reshape(nY, [1, 1, size(nY)]), [size(gY), 1, 1]);
-nsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(GetAlpha2D(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
-    ngX, ngY, nnX, nnY);
-nW = arrayfun(@(covres) det(covres.Ci), nsCovRes);
-ndW = nW .* ndYX;
-nsW = squeeze(sum(sum(ndW, 1), 2));
-
-
-
-%calculate the best location and orientation for the new camera
-%best means, where it improves the most
-[MM1,I1] = max(nsW, [], 1);
-[MM2,I2] = max(MM1, [], 2);
-m2=I2(1, 1);
-m1=I1(1, m2);
-
-mX = nX(m1,m2);
-mY = nY(m1,m2);
-mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
-mCam = CreateCamera(mAlpha,[mX;mY]);
-
-
-msCovRes = nsCovRes(:,:,m1,m2);
-mW = nW(:,:,m1,m2);
-mdW = ndW(:,:,m1,m2);
-
-
-%results
-%max indexes
-m1,m2
-%location and orientation values
-mX,mY,mAlpha
-
-
-
-
-%%2D
-figure(1); clf;
+%figure
+fig_covariance_ellipses = figure; clf;
 hold on
-axis(area2, 'equal');
+axis(displayArea, 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
@@ -141,10 +124,59 @@ arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.9
 hold off
 
 
-%%2D
-figure(2); clf;
+%% Wellness with the new camera
+
+%reshaped for 4D (gx-gy-nx-ny)
+rgX = repmat(reshape(gX, [size(gX), 1, 1]), [1, 1, size(nX)]);
+rgY = repmat(reshape(gY, [size(gY), 1, 1]), [1, 1, size(nY)]);
+rdYX = repmat(reshape(dYX, [size(dYX), 1, 1]), [1, 1, size(nX)]);
+rnX = repmat(reshape(nX, [1, 1, size(nX)]), [size(gX), 1, 1]);
+rnY = repmat(reshape(nY, [1, 1, size(nY)]), [size(gY), 1, 1]);
+
+rngsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(GetAlpha2D(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
+    rgX, rgY, rnX, rnY);
+rngW = arrayfun(@(covres) det(covres.Ci), rngsCovRes);
+rngdW = rngW .* rdYX;
+nW = squeeze(sum(sum(rngdW, 1), 2));
+
+%figure
+fig_contour = figure; clf;
 hold on
-axis(area2, 'equal');
+contour(nX,nY,nW, 60);
+axis(displayArea, 'equal');
+arrayfun(@(c) DrawCamera(c), cam);
+hold off
+
+%figure
+fig_meshz = figure; clf;
+meshz(nX,nY,nW);
+axis(displayArea);
+xlabel('x')
+ylabel('y')
+
+
+%% Wellness with the max (optimally placed) camera
+
+%calculate the best location and orientation for the new camera
+%best means, where it improves the most
+[MM1,I1] = max(nW, [], 1);
+[MM2,I2] = max(MM1, [], 2);
+m2=I2(1, 1);
+m1=I1(1, m2);
+
+mX = nX(m1,m2);
+mY = nY(m1,m2);
+mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
+mCam = CreateCamera(mAlpha,[mX;mY]);
+
+mgsCovRes = rngsCovRes(:,:,m1,m2);
+mgW = rngW(:,:,m1,m2);
+mgdW = rngdW(:,:,m1,m2);
+
+%figure
+fig_covariance_ellipses_new = figure; clf;
+hold on
+axis(displayArea, 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
@@ -154,19 +186,23 @@ DrawCamera(mCam, 'g');
 drawPolygon(dArea)
 drawPolygon(nArea)
 
-mv = [gsCovRes.valid];
+mv = [mgsCovRes.valid];
 arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
-    msCovRes(mv), gX(mv), gY(mv));
+    mgsCovRes(mv), gX(mv), gY(mv));
 
 hold off
 
 
+%% Wellness with the wrong (not optimally placed) camera
 
+wgsCovRes = arrayfun(@(gx,gy) CalculateResultingCovariance([cam,wCam], [gx;gy]), gX, gY);
+wgW = arrayfun(@(covres) det(covres.Ci), wgsCovRes);
+wgdW = wgW .* dYX;
 
-%%2D
-figure(3); clf;
+%figure
+fig_covariance_ellipses_wrong = figure; clf;
 hold on
-axis(area2, 'equal');
+axis(displayArea, 'equal');
 xlabel('x')
 ylabel('y', 'rotation', 0)
 
@@ -176,35 +212,16 @@ DrawCamera(wCam, 'r');
 drawPolygon(dArea)
 drawPolygon(nArea)
 
-wv = [gsCovRes.valid];
+wv = [wgsCovRes.valid];
 arrayfun(@(covres, gx, gy) my_2D_error_ellipse(10*covres.C, [gx;gy], 'conf', 0.95), ...
-    wsCovRes(wv), gX(wv), gY(wv));
+    wgsCovRes(wv), gX(wv), gY(wv));
 
 hold off
 
 
-
-
-%%3D
-figure(4); clf;
-hold on
-contour(nX,nY,nsW, 60);
-axis(area2, 'equal');
-arrayfun(@(c) DrawCamera(c), cam);
-hold off
-
-figure(5); clf;
-meshz(nX,nY,nsW);
-axis(area2);
-xlabel('x')
-ylabel('y')
-
-
-%save
-colormap([zeros(63,3) ; ones(1,3)]);
-saveas(figure(1), 'figures/covariance_ellipses.eps')
-saveas(figure(2), 'figures/covariance_ellipses_new.eps')
-saveas(figure(3), 'figures/covariance_ellipses_wrong.eps')
-saveas(figure(4), 'figures/contour.eps')
-saveas(figure(5), 'figures/meshz.eps')
-
+%% save figures
+saveas(fig_covariance_ellipses, 'figures/covariance_ellipses.eps')
+saveas(fig_contour, 'figures/contour.eps')
+saveas(fig_meshz, 'figures/meshz.eps')
+saveas(fig_covariance_ellipses_new, 'figures/covariance_ellipses_new.eps')
+saveas(fig_covariance_ellipses_wrong, 'figures/covariance_ellipses_wrong.eps')

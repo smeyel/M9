@@ -1,51 +1,71 @@
+function [] = main1()
 
-%file for trying the actual problem
+% file for trying the actual problem
+% Display the covariance ellipses for two cameras
+% Display the resulting covariance ellipse
 
+%% notes
+% single letters in variable names:
+% e - ellipse
+% c - camera
+
+%% preparation
+
+close all
 clear
 clc
 
-warning('off', 'Octave:possible-matlab-short-circuit-operator');
-
 myAddPath
 
-global useFoV=false;
+%colormap([zeros(63,3) ; ones(1,3)]);
+%warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
-X=95;
-Y=0;
-
-%%--- camera ---
-%the location and oreientation of the cameras
-x1=10;
-y1=50;
-cam(1) = CreateCamera(GetAlpha2D(X-x1, Y-y1), [x1;y1]);
-x2=10;
-y2=-50;
-cam(2) = CreateCamera(GetAlpha2D(X-x2, Y-y2), [x2;y2]);
+global useFoV;
+useFoV=false;
 
 
-%%2D
-figure(1); clf;
+%% local variable definitions
+
+% --- displayArea ---
+displayArea = [0 150 -60 70];
+
+
+% --- ellipse center ---
+eX=95;
+eY=0;
+
+% --- camera ---
+%the location and orientation of the cameras
+cX1=10;
+cY1=50;
+cX2=10;
+cY2=-50;
+cam(1) = CreateCamera(GetAlpha2D(eX-cX1, eY-cY1), [cX1;cY1]);
+cam(2) = CreateCamera(GetAlpha2D(eX-cX2, eY-cY2), [cX2;cY2]);
+
+
+%% Covariance ellipses
+
+csCovRes = arrayfun(@(camera) CalculateCovariance(camera, [eX;eY]), cam);
+esCovRes = CalculateResultingCovariance(cam, [eX;eY]);
+
+%figure
+fig_covariance_ellipses_one = figure; clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis(displayArea, 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
+arrayfun(@(c) DrawCamera(c), cam);
 
-csCovRes = CalculateCovariance(cam, [X;Y]);
-gsCovRes = CalculateResultingCovariance(cam, [X;Y]);
-h = my_2D_error_ellipse(100*inv(csCovRes(1).Ci_kamu), [X;Y], 'conf', 0.95);
-h = my_2D_error_ellipse(100*inv(csCovRes(2).Ci_kamu), [X;Y], 'conf', 0.95);
-h = my_2D_error_ellipse(100*gsCovRes.C, [X;Y], 'conf', 0.95);
-%plot([cam(1).pos(1) X], [cam(1).pos(2) Y])
-%plot([cam(2).pos(1) X], [cam(2).pos(2) Y])
+my_2D_error_ellipse(100*pinv(csCovRes(1).Ci_kamu), [eX;eY], 'conf', 0.95);
+my_2D_error_ellipse(100*pinv(csCovRes(2).Ci_kamu), [eX;eY], 'conf', 0.95);
+my_2D_error_ellipse(100*esCovRes.C, [eX;eY], 'conf', 0.95);
+%plot([cam(1).pos(1) eX], [cam(1).pos(2) eY])
+%plot([cam(2).pos(1) eX], [cam(2).pos(2) eY])
 
 hold off
 
 
-
-
-%save
-colormap([zeros(63,3) ; ones(1,3)]);
-saveas(figure(1), "figures/covariance_ellipses_one.eps")
-
+%% save figures
+saveas(fig_covariance_ellipses_one, 'figures/covariance_ellipses_one.eps')
