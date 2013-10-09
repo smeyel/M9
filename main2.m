@@ -4,35 +4,56 @@
 clear
 clc
 
+%warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
-[gX,gY] = meshgrid(-49:2:49, -49:2:49);
-
-
-
-E = 10;
-F = 90;
-Gr = 0;
-Hr = 1000;
+myAddPath
 
 
+[nX,nY] = meshgrid(-49:2:49, -49:2:49);
 
-t2 = gX.^2 + gY.^2;
-K4 = (E-F)*(Gr-Hr) + Gr*Hr;
-K2 = E*Hr + F*Gr;
-K0 = E*F;
 
-gW = gY.^2 ./ t2.^2 * K4 + ...
-     1 ./ t2 * K2 + ...
-     K0;
+ 
+ 
+nW = (-1) * arrayfun(@(nx,ny) myfunc([nx;ny]), nX, nY);
 
 
 
 %%3D
 figure(1); clf;
-contour(gX,gY,gW,900:10:1100);
+contour(nX,nY,nW,900:10:1100);
 axis('equal');
 xlabel('x');
 ylabel('y', 'rotation', 0)
+
+
+
+
+
+
+minX = -40;
+maxX = -15;
+minY = -30;
+maxY = 30;
+startX = -20;
+startY = -20;
+
+[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(@myfunc, ...
+    [startX;startY], ...
+    [], [], ...
+    [], [], ...
+    [minX;minY], [maxX;maxY]);
+
+oArea = [minX minY ; ...
+         minX maxY ; ...
+         maxX maxY ; ...
+         maxX minY];
+
+figure(1)
+hold on
+drawPolygon(oArea)
+plot(x(1), x(2), 'r*')
+hold off
+
 
 
 

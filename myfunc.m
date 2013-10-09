@@ -11,10 +11,10 @@ K4 = (E-F)*(Gr-Hr) + Gr*Hr;
 K2 = E*Hr + F*Gr;
 K0 = E*F;
 
-gW = x(2)^2 / t2^2 * K4 + ...
+nW = x(2)^2 / t2^2 * K4 + ...
      1 / t2 * K2 + ...
      K0;
-f = -gW;
+f = -nW;
 
 
 
