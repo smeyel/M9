@@ -1,8 +1,8 @@
 #vim
 *.swp
 
-#octave pictures
-*.eps
+#pictures
+figures/*
 
 #matlab asv files
 *.asv
