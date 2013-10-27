@@ -127,6 +127,12 @@ plot(maxXFromSolver, maxYFromSolver, 'k*')
 hold off
 
 
+% plot some objfuncs with its optimum
+v = logical([0 0 0 0 1 1 0 1 1]);
+arrayfun(@(func, maxA, maxF) plotObjFuncOnCurveAndMax(func, maxA, maxF), objfuncs(v), maxAs(v), maxFs(v))
+
+
+
 
 function plotCurve(func)
 % plot one symbolic curve
