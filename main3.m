@@ -90,10 +90,9 @@ maxRayFromSlopeN = createRay([gX gY], [gX+1 gY-maxSlope]);
 
 %% the extremal points of the curve segments
 
-[maxXc maxYc maxFc] = arrayfun(@(func) getMaxForLine(gsCovRes, cam(1).e_pixel, cam(1).f_pixel, func), f, 'UniformOutput', false);
-maxXs = cell2mat(maxXc);
-maxYs = cell2mat(maxYc);
-maxFs = cell2mat(maxFc);
+[objfuncc xc yc] = arrayfun(@(func) getObjFunc(gsCovRes, cam(1).e_pixel, cam(1).f_pixel, func), f, 'UniformOutput', false);
+[maxAs maxXs maxYs maxFs] = cellfun(@(f, x, y) getObjFuncMaxForLine(f, x, y), objfuncc, xc, yc);
+objfuncs = reshape([objfuncc{:}], size(objfuncc));
 
 
 %% the global optimum
@@ -138,13 +137,21 @@ Xs = cell2mat(Xc);
 plot(Xs(1,:), Xs(2,:));
 
 
-function [maxX maxY maxF] = getMaxForLine(covres, e, f, func)
-% calculate the extremal point of the objective function on one curve
+function plotObjFuncOnCurveAndMax(func, maxA, maxF)
+% plot the objective function on a curve and its extremal point
+syms a
+figure
+hold on
+ezplot(func, [0 1])
+title('')
+plot(maxA, maxF, 'r*')
+hold off
+
+
+function [f x y] = getObjFunc(covres, e, f, func)
+% calculate the objective function
 
 [A B C] = getConsts(covres, e, f);
-
-Dx = covres.mu(1);
-Dy = covres.mu(2);
 
 syms a
 
@@ -157,10 +164,20 @@ y1 = xy1(2);
 dx = x1-x0;
 dy = y1-y0;
 
-x=x0+a*dx - Dx;
-y=y0+a*dy - Dy;
-d2=x^2+y^2;
-f=y^2/d2^2*A+1/d2*B+C;
+x = x0+a*dx;
+y = y0+a*dy;
+
+% r: reduced, in the coordinate system fitted to the observed point
+xr = x - covres.mu(1);
+yr = y - covres.mu(2);
+d2 = xr^2 + yr^2;
+f = A * yr^2/d2^2 + B * 1/d2 + C;
+
+
+function [maxA maxX maxY maxF] = getObjFuncMaxForLine(f, x, y)
+% calculate the extremal point of the objective function on one curve
+
+syms a
 F=diff(f);
 sols = subs(solve(F==0));
 sols01 = sols(sols==real(sols) & 0 < sols & sols < 1);
@@ -169,9 +186,8 @@ as = [0;sols01;1];
 fs=subs(f, a, as);
 [maxF maxA_index] = max(fs);
 maxA = as(maxA_index);
-
-maxX = subs(x, a, maxA) + Dx;
-maxY = subs(y, a, maxA) + Dy;
+maxX = subs(x, a, maxA);
+maxY = subs(y, a, maxA);
 
 
 function f = objfunc(cam, gX, gY, x)
