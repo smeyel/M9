@@ -131,10 +131,8 @@ hold off
 function plotCurve(func)
 % plot one symbolic curve
 syms a
-b = 0:0.1:1;
-Xc = arrayfun(@(b) subs(func, a, b), b, 'UniformOutput', false);
-Xs = cell2mat(Xc);
-plot(Xs(1,:), Xs(2,:));
+ezplot(func(1), func(2), [0 1]);
+title('')
 
 
 function plotObjFuncOnCurveAndMax(func, maxA, maxF)
