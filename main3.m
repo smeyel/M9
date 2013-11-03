@@ -72,11 +72,17 @@ minXn = min(min(nX));
 maxXn = max(max(nX));
 minYn = min(min(nY));
 maxYn = max(max(nY));
-[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(@(x) objfunc(cam, gX, gY, x), ...
-    [minXn;minYn], ...
-    [], [], ...
-    [], [], ...
-    [minXn;minYn], [maxXn;maxYn]);
+startX = minXn;
+startY = minYn;
+[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(...
+    @(x) objfunc(cam, gX, gY, x), ... %fun
+    [startX;startY], ... %x0
+    [], [], ... %A, b
+    [], [], ... %Aeq, beq
+    [minXn;minYn], ... %lb
+    [maxXn;maxYn], ... %ub
+    [], ... %nonlcon
+    []); %options
 maxXFromSolver = x(1);
 maxYFromSolver = x(2);
 
