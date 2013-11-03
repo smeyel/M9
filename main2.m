@@ -2,6 +2,7 @@ function [] = main2()
 
 % file for trying the actual problem
 % trying the solver call
+% call the solver and plot the points
 
 
 %% notes
@@ -47,30 +48,54 @@ minX = -40;
 maxX = -15;
 minY = -30;
 maxY = 30;
-startX = -20;
-startY = -20;
+startX = -40;
+startY = 15;
 
-[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(@myfunc, ...
-    [startX;startY], ...
-    [], [], ...
-    [], [], ...
-    [minX;minY], [maxX;maxY]);
 
 oArea = [minX minY ; ...
          minX maxY ; ...
          maxX maxY ; ...
          maxX minY];
 
-%figure
+
 figure(fig_contour_add_one_camera)
 hold on
+
 drawPolygon(oArea)
+
+global firstCall
+firstCall = true;
+[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(...
+    @myfunc, ... %fun
+    [startX;startY], ... %x0
+    [], [], ... %A, b
+    [], [], ... %Aeq, beq
+    [minX;minY], ... %lb
+    [maxX;maxY], ... %ub
+    [], ... %nonlcon
+    optimset('OutputFcn', @outputfun)); %options
+
 plot(x(1), x(2), 'r*')
+
 hold off
 
 
 %% save figures
 saveas(fig_contour_add_one_camera, 'figures/contour_add_one_camera.eps')
+
+
+function stop = outputfun(x, optimValues, state)
+% output function for the solver
+% plots the points and connects the consecutive ones
+global firstCall
+global pre
+if ~firstCall
+    plot([x(1) pre(1)], [x(2) pre(2)], 'k')
+end
+firstCall = false;
+plot(x(1), x(2), 'g*')
+pre = x;
+stop = 0;
 
 
 function f = myfunc(x)
