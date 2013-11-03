@@ -7,3 +7,6 @@ figures/*
 #matlab asv files
 *.asv
 
+#backup files
+*~
+
