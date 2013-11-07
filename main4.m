@@ -27,7 +27,7 @@ global firstCall
 %% calculate the objective function
 
 if calc_sym_s1_s2_K
-syms s1 s2 K
+syms s1 s2 K real
 else
 % actual values get from main3: gsCovRes.Ci
 s1 = 20.4800;
@@ -38,19 +38,18 @@ K = (e/f)^(-2);
 end
 
 if calc_x_y_not_a_d
-    syms x y
+    syms x y real
     a = atan(y/x);
     d = sqrt(x^2+y^2);
 else
-    syms a d
+    syms a d real
 end
 
 s3 = K * 1/d^2;
 S1 = [s1 0 ; 0 s2];
 S2 = [0 0 ; 0 s3];
 R = [cos(a) -sin(a) ; sin(a) cos(a)];
-Rt = [cos(a) sin(a) ; -sin(a) cos(a)];
-Se = S1 + R*S2*Rt;
+Se = S1 + R*S2*R';
 
 [tv,td] = eig(Se);
 d1 = td(1,1);

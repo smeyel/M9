@@ -44,7 +44,7 @@ gsCovRes = CalculateResultingCovariance(cam, [gX;gY]);
 
 %% curves as constraints
 
-syms a
+syms a real
 
 f{1} = [85;-50]         + a * [0 ; 10];
 f{2} = subs(f{1}, a, 1) + a * [5 ; 10];
@@ -142,14 +142,14 @@ arrayfun(@(func, maxA, maxF) plotObjFuncOnCurveAndMax(func, maxA, maxF), objfunc
 
 function plotCurve(func)
 % plot one symbolic curve
-syms a
+syms a real
 ezplot(func(1), func(2), [0 1]);
 title('')
 
 
 function plotObjFuncOnCurveAndMax(func, maxA, maxF)
 % plot the objective function on a curve and its extremal point
-syms a
+syms a real
 figure
 hold on
 ezplot(func, [0 1])
@@ -163,7 +163,7 @@ function [f x y] = getObjFunc(covres, e, f, func)
 
 [A B C] = getConsts(covres, e, f);
 
-syms a
+syms a real
 
 xy0 = subs(func, a, 0);
 xy1 = subs(func, a, 1);
@@ -187,7 +187,7 @@ f = A * yr^2/d2^2 + B * 1/d2 + C;
 function [maxA maxX maxY maxF] = getObjFuncMaxForLine(f, x, y)
 % calculate the extremal point of the objective function on one curve
 
-syms a
+syms a real
 F=diff(f);
 sols = subs(solve(F==0));
 sols01 = sols(sols==real(sols) & 0 < sols & sols < 1);
