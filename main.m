@@ -32,6 +32,8 @@ myAddPath
 
 global useFoV;
 useFoV=false;
+global useDetectAngle
+useDetectAngle=false;
 
 
 %% local variable definitions

@@ -5,6 +5,7 @@ function out = CalculateCovariance(cam, X)
 %out: struct containing the fields: Ci, mu
 
 global useFoV;
+global useDetectAngle;
 
 %preallocation
 out = struct('Ci', zeros(2,2), ...
@@ -38,7 +39,11 @@ y = X_c_h(2);
 
 alfa = GetAlpha2D(x,y);
 
-sig = t * cos(alfa)^2 / cam.f_mm * cam.e_mm;
+if useDetectAngle
+    sig = t * cos(alfa)^2 / cam.f_mm * cam.e_mm;
+else
+    sig = t / cam.f_mm * cam.e_mm;
+end
 
 Ci = [ 0     0    ;
        0  1/sig^2 ] ;
