@@ -212,14 +212,9 @@ f = -nW;
 function [A B C] = getConsts(covres, e, f)
 % calculate the constant values A, B and C
 % e, f: error and focal length of the new camera, same unit
-[v,d] = eig(covres.Ci);
-if(d(1,1)<d(2,2))
-    s1 = d(1,1);
-    s2 = d(2,2);
-else
-    s1 = d(2,2);
-    s2 = d(1,1);
-end
+d = eig(covres.Ci);
+s1 = min(d);
+s2 = max(d);
 A = (s2-s1) * (e/f)^(-2);
 B = s1 * (e/f)^(-2);
 C = s1 * s2;

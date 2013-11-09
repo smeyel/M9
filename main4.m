@@ -51,9 +51,9 @@ S2 = [0 0 ; 0 s3];
 R = [cos(a) -sin(a) ; sin(a) cos(a)];
 Se = S1 + R*S2*R';
 
-[tv,td] = eig(Se);
-d1 = td(1,1);
-d2 = td(2,2);
+td = eig(Se);
+d1 = td(1);
+d2 = td(2);
 
 if calc_sym_s1_s2_K
 obj = subs(d2, {K,s1,s2}, {(1/480)^(-2), 20.4800, 327.6800});
