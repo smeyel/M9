@@ -3,6 +3,7 @@ function DrawCamera(cam, color)
 %cam: camera struct
 
 global useFoV;
+global useDetectAngle;
 
 default_center_circle_radius = 2;
 
@@ -36,7 +37,7 @@ if useFoV
   drawRay([c;dl]', color);
   drawRay([c;dh]', color);
 
-else
+elseif useDetectAngle
 
   l = 10; %length
   plot([c(1) c(1)+l*nf(1)], [c(2) c(2)+l*nf(2)], color)
