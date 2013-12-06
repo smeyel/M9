@@ -27,11 +27,12 @@ nW = arrayfun(@(n11,n22) myfunc(n11, n22), n1, n2);
 fig_contour_3d = figure; clf;
 contour(n1, n2, nW);
 axis('equal');
-xlabel('x')
-ylabel('z', 'rotation', 0)
+%xlabel('z')
+%ylabel('x', 'rotation', 0)
 
 
 %% save figures
+colormap([zeros(63,3) ; ones(1,3)]);
 saveas(fig_contour_3d, 'figures/contour_3d_1.eps', 'epsc')
 
 
@@ -40,7 +41,7 @@ function W = myfunc(d1, d2)
 % parametric plane
 p = [0;4;0];
 v1 = [0;0;1];
-v2 = [1;0;0];
+v2 = [1;0;2];
 v1 = v1 / norm(v1);
 v2 = v2 / norm(v2);
 xyz = p + d1*v1 + d2*v2;
@@ -51,7 +52,7 @@ z = xyz(3);
 % actual values (s1,s2,e,f) get from main3: gsCovRes.Ci
 s1 = 20.4800;
 s2 = 327.6800;
-s3 = 10*s2;
+s3 = 2*s2;
 e = 1;
 f = 480;
 K4 = (e/f)^(-2);
@@ -60,7 +61,7 @@ K5 = K4 / 2;
 d = sqrt(x^2+y^2+z^2);
 a = GetAlpha2D(x,y);
 b = asin(z/d);
-c = 0;
+c = 1;
 
 s4 = K4 * 1/d^2;
 s5 = K5 * 1/d^2;
