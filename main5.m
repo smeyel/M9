@@ -40,10 +40,11 @@ function W = myfunc(d1, d2)
 
 % parametric plane
 p = [0;4;0];
-v1 = [0;0;1];
-v2 = [1;0;2];
-v1 = v1 / norm(v1);
-v2 = v2 / norm(v2);
+w1 = [0;0;1];
+w2 = [1;2;0];
+v1 = w1 / norm(w1);
+w2n = w2 - v1'*w2*v1;
+v2 = w2n / norm(w2n);
 xyz = p + d1*v1 + d2*v2;
 x = xyz(1);
 y = xyz(2);
