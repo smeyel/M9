@@ -7,12 +7,14 @@ function out = CombineGaussians(in)
 %C3 = inv(Ci3)
 %mu3 = C3 * (Ci1 * mu1 + Ci2 * mu2)
 
+dim = max(size(in(1).mu));
+
 %preallocation
 out = struct('valid', false, ...
-             'C', zeros(2,2), ...
-             'Ci', zeros(2,2), ...
-             'mu', zeros(2,1));
-mmu = zeros(2,1);
+             'C', zeros(dim,dim), ...
+             'Ci', zeros(dim,dim), ...
+             'mu', zeros(dim,1));
+mmu = zeros(dim,1);
 
 for i = 1:length(in);
   out.Ci = out.Ci + in(i).Ci;
