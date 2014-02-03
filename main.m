@@ -99,7 +99,7 @@ nArea = [min(min(nX)) min(min(nY)) ; ...
 %at one of the corners of the new camera rectangle
 wX = max(max(nX));
 wY = min(min(nY));
-wAlpha = GetAlpha2D(dmX-wX, dmY-wY);
+wAlpha = cart2pol(dmX-wX, dmY-wY);
 wCam = CreateCamera(wAlpha,[wX;wY]);
 
 
@@ -135,7 +135,7 @@ rdYX = repmat(reshape(dYX, [size(dYX), 1, 1]), [1, 1, size(nX)]);
 rnX = repmat(reshape(nX, [1, 1, size(nX)]), [size(gX), 1, 1]);
 rnY = repmat(reshape(nY, [1, 1, size(nY)]), [size(gY), 1, 1]);
 
-rngsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(GetAlpha2D(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
+rngsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(cart2pol(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
     rgX, rgY, rnX, rnY);
 rngW = arrayfun(@(covres) det(covres.Ci), rngsCovRes);
 rngdW = rngW .* rdYX;
@@ -168,7 +168,7 @@ m1=I1(1, m2);
 
 mX = nX(m1,m2);
 mY = nY(m1,m2);
-mAlpha = GetAlpha2D(dmX-mX, dmY-mY);
+mAlpha = cart2pol(dmX-mX, dmY-mY);
 mCam = CreateCamera(mAlpha,[mX;mY]);
 
 mgsCovRes = rngsCovRes(:,:,m1,m2);

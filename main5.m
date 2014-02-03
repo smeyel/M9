@@ -59,9 +59,7 @@ f = 480;
 K4 = (e/f)^(-2);
 K5 = K4 / 2;
 
-d = sqrt(x^2+y^2+z^2);
-a = GetAlpha2D(x,y);
-b = asin(z/d);
+[a b d] = cart2sph(x, y, z);
 c = 1;
 
 s4 = K4 * 1/d^2;

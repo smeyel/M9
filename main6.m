@@ -93,7 +93,9 @@ fx = 789.1510;
 fy = 789.1510;
 
 v = p-t;
-d = norm(v);
+x = 0; % fx = fy = f, symmetric, it can be zero
+[z y d] = cart2sph(v(1), v(2), v(3));
+
 %  cam -> world
 %      ->  x
 %   x  ->  y
@@ -104,9 +106,6 @@ siy = sigy^(-2);
 siz = sigz^(-2);
 Ci = diag([0,siy,siz]);
 
-x = 0; % fx = fy = f, symmetric, it can be zero
-y = asin(v(3)/d);
-z = GetAlpha2D(v(1),v(2));
 
 Rz = [cos(z) -sin(z) 0 ; sin(z) cos(z) 0 ; 0 0 1];
 Ry = [cos(y) 0 sin(y) ; 0 1 0 ; -sin(y) 0 cos(y)];

@@ -37,7 +37,7 @@ X_c_h = cam.RT * X_w_h;
 x = X_c_h(1);
 y = X_c_h(2);
 
-alfa = GetAlpha2D(x,y);
+alfa = cart2pol(x,y);
 
 if useDetectAngle
     sig = t * cos(alfa)^2 / cam.f_mm * cam.e_mm;
