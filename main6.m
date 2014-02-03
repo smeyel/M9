@@ -11,6 +11,21 @@ clc
 
 myAddPath
 
+indata = dlmread('M1R1_stableframeDataProcessor_stats.csv',' ');
+
+% Statistics for every stable frame interval (location)
+LocationMean2Ray = indata(:,1:3);
+LocationMean3Ray = indata(:,4:6);
+LocationMeanAll = indata(:,7:9);
+LocationStd2Ray = indata(:,10:12);
+LocationStd3Ray = indata(:,13:15);
+LocationStdAll = indata(:,16:18);
+LocationEffectiveStd2Ray = indata(:,19);
+LocationEffectiveStd3Ray = indata(:,20);
+LocationEffectiveStdAll = indata(:,21);
+
+
+
 % camera positions
 % from the ICSSE_2013 publication
 % from the log
@@ -18,19 +33,40 @@ t0 = [-674.3543 ; 263.9349 ; -677.6962];
 t1 = [871.0314 ; -266.2977 ; -522.8290];
 t2 = [-28.0911 ; -265.4436 ; -758.5166];
 
-% observed point
-p = [175.09 ; -185.7 ; 103.74];
+means = LocationMean3Ray;
+cc = max(size(means)); % column count
+TheoryLocationStd = zeros(cc,3);
+for i=1:cc
 
-% covariance matrix inverses and the resulting covariace matrix
-Ciw0 = calc_Ci(t0, p);
-Ciw1 = calc_Ci(t1, p);
-Ciw2 = calc_Ci(t2, p);
-Ciw = Ciw0 + Ciw1 + Ciw2;
-Cw = inv(Ciw);
+    % observed point
+    p = means(i,:)';
 
-% variance in the x-y-z directions
-[V D] = eig(Cw);
-sigres = V.^2 * diag(D)
+    if any(isnan(p))
+        sigres = [0;0;0];
+    else
+        % covariance matrix inverses and the resulting covariace matrix
+        Ciw0 = calc_Ci(t0, p);
+        Ciw1 = calc_Ci(t1, p);
+        Ciw2 = calc_Ci(t2, p);
+        Ciw = Ciw0 + Ciw1 + Ciw2;
+        Cw = inv(Ciw);
+
+        % variance in the x-y-z directions
+        [V D] = eig(Cw);
+        sigres = V.^2 * diag(D);
+    end
+    TheoryLocationStd(i,1:3) = sigres';
+
+end
+
+bar(TheoryLocationStd(:,:));
+axis([1 size(TheoryLocationStd,1) 0 5]);
+legend('X','Y','Z');
+xlabel('Location index');
+ylabel('Standard deviation');
+
+return
+
 
 % figure
 figure
@@ -51,16 +87,24 @@ hold off
 % the result is given in the world coordinate system
 function Ciw = calc_Ci(t, p)
 
-e = 1; % assumption
-f = 789.1510; % from the ICSSE_2013 publication, from the C++ code
+e = 0.85; % assumption
+% from the ICSSE_2013 publication, from the C++ code
+fx = 789.1510;
+fy = 789.1510;
 
 v = p-t;
 d = norm(v);
-sig = d * e / f;
-si = sig^(-2);
-Ci = diag([0,si,si]);
+%  cam -> world
+%      ->  x
+%   x  ->  y
+%   y  ->  z
+sigy = d * e / fx;
+sigz = d * e / fy;
+siy = sigy^(-2);
+siz = sigz^(-2);
+Ci = diag([0,siy,siz]);
 
-x = 0; % fx = fy = f, symmetric
+x = 0; % fx = fy = f, symmetric, it can be zero
 y = asin(v(3)/d);
 z = GetAlpha2D(v(1),v(2));
 
