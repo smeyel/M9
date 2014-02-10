@@ -40,8 +40,8 @@ cX1=10;
 cY1=50;
 cX2=10;
 cY2=-50;
-cam(1) = CreateCamera(GetAlpha2D(eX-cX1, eY-cY1), [cX1;cY1]);
-cam(2) = CreateCamera(GetAlpha2D(eX-cX2, eY-cY2), [cX2;cY2]);
+cam(1) = CreateCamera(cart2pol(eX-cX1, eY-cY1), [cX1;cY1]);
+cam(2) = CreateCamera(cart2pol(eX-cX2, eY-cY2), [cX2;cY2]);
 
 
 %% Covariance ellipses
