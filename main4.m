@@ -18,8 +18,8 @@ myAddPath
 
 %% definition
 
-calc_sym_s1_s2_K = false;
-calc_x_y_not_a_d = true;
+calc_sym_s1_s2_K = true;
+calc_x_y_not_a_d = false;
 
 global firstCall
 
@@ -27,7 +27,7 @@ global firstCall
 %% calculate the objective function
 
 if calc_sym_s1_s2_K
-syms s1 s2 K real
+syms s1 s2 s3 K4 K5 real
 else
 % actual values get from main3: gsCovRes.Ci
 s1 = 20.4800;
@@ -38,22 +38,28 @@ K = (e/f)^(-2);
 end
 
 if calc_x_y_not_a_d
-    syms x y real
+    syms x y z real
+    d = sqrt(x^2+y^2+z^2);
     a = atan(y/x);
-    d = sqrt(x^2+y^2);
+    b = asin(z/d);
 else
-    syms a d real
+    syms a b d real
 end
 
-s3 = K * 1/d^2;
-S1 = [s1 0 ; 0 s2];
-S2 = [0 0 ; 0 s3];
-R = [cos(a) -sin(a) ; sin(a) cos(a)];
-Se = S1 + R*S2*R';
+s4 = K4 * 1/d^2;
+s5 = K5 * 1/d^2;
+S1 = [s1 0 0 ; 0 s2 0 ; 0 0 s3];
+S2 = [0 0 0 ; 0 s4 0 ; 0 0 s5];
+Ra = [cos(a) -sin(a) 0 ; 0 0 1 ; sin(a) cos(a) 0];
+Rb = [cos(b) 0 sin(b) ; 0 1 0 ; -sin(b) 0 cos(b)];
+Se = S1 + Rb'*Ra'*S2*Ra*Rb
 
-td = eig(Se);
+td = eig(Se)
 d1 = td(1);
 d2 = td(2);
+d3 = td(3);
+
+return
 
 if calc_sym_s1_s2_K
 obj = subs(d2, {K,s1,s2}, {(1/480)^(-2), 20.4800, 327.6800});
