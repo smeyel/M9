@@ -32,6 +32,8 @@ myAddPath
 
 global useFoV;
 useFoV=false;
+global useDetectAngle
+useDetectAngle=false;
 
 
 %% local variable definitions
@@ -64,7 +66,7 @@ dYX = zeros(size(gX));
 % uniform distribution
 dYX(:) = 1/(size(gX,1)*size(gX,2));
 
-if sum(sum(dYX)) ~= 1
+if 10e-6 < abs(1 - sum(sum(dYX)))
   error('dYX is not a valid density function!')
 end
 

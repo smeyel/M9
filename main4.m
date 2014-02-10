@@ -18,12 +18,16 @@ myAddPath
 
 %% definition
 
-displayArea = [0 pi 0 100];
+calc_sym_s1_s2_K = false;
+calc_x_y_not_a_d = true;
 
-calc_sym = false;
+global firstCall
 
-if calc_sym
-syms s1 s2 K
+
+%% calculate the objective function
+
+if calc_sym_s1_s2_K
+syms s1 s2 K real
 else
 % actual values get from main3: gsCovRes.Ci
 s1 = 20.4800;
@@ -33,23 +37,25 @@ f = 480;
 K = (e/f)^(-2);
 end
 
-
-%% calculate the objective function
-
-syms a d
+if calc_x_y_not_a_d
+    syms x y real
+    a = atan(y/x);
+    d = sqrt(x^2+y^2);
+else
+    syms a d real
+end
 
 s3 = K * 1/d^2;
 S1 = [s1 0 ; 0 s2];
 S2 = [0 0 ; 0 s3];
 R = [cos(a) -sin(a) ; sin(a) cos(a)];
-Rt = [cos(a) sin(a) ; -sin(a) cos(a)];
-Se = S1 + R*S2*Rt;
+Se = S1 + R*S2*R';
 
-[tv,td] = eig(Se);
-d1 = td(1,1);
-d2 = td(2,2);
+td = eig(Se);
+d1 = td(1);
+d2 = td(2);
 
-if calc_sym
+if calc_sym_s1_s2_K
 obj = subs(d2, {K,s1,s2}, {(1/480)^(-2), 20.4800, 327.6800});
 else
 obj = d1;
@@ -58,20 +64,82 @@ end
 
 %% base figures
 
-fig_surf_eig = figure; clf;
-ezsurf(obj, displayArea)
-title('')
 
-fig_contour_eig = figure; clf;
-ezcontour(obj, displayArea)
-title('')
+if calc_x_y_not_a_d
+    displayArea = [-100 100 0 100];
 
-fig_eig_fix_a_90deg = figure; clf;
-ezplot(subs(obj, a, pi/2), [0 100])
-title('')
+    fig_surf_eig_x_y = figure; clf;
+    ezsurf(obj, displayArea)
+    title('')
+
+    fig_contour_eig_x_y = figure; clf;
+    ezcontour(obj, displayArea)
+    title('')
+
+    fig_eig_fix_x_0 = figure; clf;
+    ezplot(subs(obj, x, 0), [0 100])
+    title('')
+else
+    displayArea = [0 pi 0 100];
+
+    fig_surf_eig_a_d = figure; clf;
+    ezsurf(obj, displayArea)
+    title('')
+
+    fig_contour_eig_a_d = figure; clf;
+    ezcontour(obj, displayArea)
+    title('')
+
+    fig_eig_fix_a_90deg = figure; clf;
+    ezplot(subs(obj, a, pi/2), [0 100])
+    title('')
+end
 
 
-%% Call the solver
+%% Call the solver (x, y)
+
+if calc_x_y_not_a_d
+
+minX = -50;
+maxX = 50;
+minY = 0;
+maxY = 80;
+startX = -40;
+startY = 80;
+
+
+oArea = [minX minY ; ...
+         minX maxY ; ...
+         maxX maxY ; ...
+         maxX minY];
+
+
+figure(fig_contour_eig_x_y);
+hold on
+
+drawPolygon(oArea)
+
+firstCall = true;
+xopt = fmincon(...
+    @(v) -subs(obj, {x,y}, {v(1),v(2)}), ... %fun
+    [startX;startY], ... %x0
+    [], [], ... %A, b
+    [], [], ... %Aeq, beq
+    [minX;minY], ... %lb
+    [maxX;maxY], ... %ub
+    [], ... %nonlcon
+    optimset('OutputFcn', @outputfun)); %options
+
+plot(xopt(1), xopt(2), 'r*')
+
+hold off
+
+end
+
+
+%% Call the solver (a, d)
+
+if ~calc_x_y_not_a_d
 
 minA = 0.4;
 maxA = 2.6;
@@ -87,15 +155,14 @@ oArea = [minA minD ; ...
          maxA minD];
 
 
-figure(fig_contour_eig);
+figure(fig_contour_eig_a_d);
 hold on
 
 drawPolygon(oArea)
 
-global firstCall
 firstCall = true;
-[x,fval,exitflag,output,lambda,grad,hessian] = fmincon(...
-    @(x) -subs(obj, {a,d}, {x(1),x(2)}), ... %fun
+xopt = fmincon(...
+    @(v) -subs(obj, {a,d}, {v(1),v(2)}), ... %fun
     [startA;startD], ... %x0
     [], [], ... %A, b
     [], [], ... %Aeq, beq
@@ -104,15 +171,23 @@ firstCall = true;
     [], ... %nonlcon
     optimset('OutputFcn', @outputfun)); %options
 
-plot(x(1), x(2), 'r*')
+plot(xopt(1), xopt(2), 'r*')
 
 hold off
 
+end
+
 
 %% save figures
-saveas(fig_surf_eig, 'figures/surf_eig.eps', 'epsc')
-saveas(fig_contour_eig, 'figures/contour_eig.eps', 'epsc')
-saveas(fig_eig_fix_a_90deg, 'figures/eig_fix_a_90deg.eps', 'epsc')
+if calc_x_y_not_a_d
+    saveas(fig_surf_eig_x_y, 'figures/surf_eig_x_y.eps', 'epsc')
+    saveas(fig_contour_eig_x_y, 'figures/contour_eig_x_y.eps', 'epsc')
+    saveas(fig_eig_fix_x_0, 'figures/eig_fix_x_0.eps', 'epsc')
+else
+    saveas(fig_surf_eig_a_d, 'figures/surf_eig_a_d.eps', 'epsc')
+    saveas(fig_contour_eig_a_d, 'figures/contour_eig_a_d.eps', 'epsc')
+    saveas(fig_eig_fix_a_90deg, 'figures/eig_fix_a_90deg.eps', 'epsc')
+end
 
 
 
