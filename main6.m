@@ -95,6 +95,7 @@ fy = 789.1510;
 v = p-t;
 x = 0; % fx = fy = f, symmetric, it can be zero
 [z y d] = cart2sph(v(1), v(2), v(3));
+y = -y; % elevation from xy plane, but clockwise around y axis
 
 %  cam -> world
 %      ->  x

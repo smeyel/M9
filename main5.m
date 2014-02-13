@@ -60,6 +60,7 @@ K4 = (e/f)^(-2);
 K5 = K4 / 2;
 
 [a b d] = cart2sph(x, y, z);
+b = -b; % elevation from xy plane, but clockwise around y axis
 c = 1;
 
 s4 = K4 * 1/d^2;
