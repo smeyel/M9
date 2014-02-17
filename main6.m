@@ -87,10 +87,12 @@ hold off
 % the result is given in the world coordinate system
 function Ciw = calc_Ci(t, p)
 
-e = 0.7758; % from ps3eye_intrinsics_red.xml (Avg_Reprojection_Error)
-% from the ICSSE_2013 publication, from the C++ code
+% from ps3eye_intrinsics_red.xml (Avg_Reprojection_Error, Camera_Matrix)
+e = 0.7758;
 fx = 789.1510;
 fy = 789.1510;
+cx = 319.5;
+cy = 239.5;
 
 v = p-t;
 x = 0; % fx = fy = f, symmetric, it can be zero
