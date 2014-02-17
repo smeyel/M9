@@ -87,7 +87,7 @@ hold off
 % the result is given in the world coordinate system
 function Ciw = calc_Ci(t, p)
 
-e = 0.85; % assumption
+e = 0.7758; % from ps3eye_intrinsics_red.xml (Avg_Reprojection_Error)
 % from the ICSSE_2013 publication, from the C++ code
 fx = 789.1510;
 fy = 789.1510;
