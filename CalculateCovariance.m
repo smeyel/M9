@@ -9,9 +9,11 @@ global useDetectAngle;
 
 %preallocation
 out = struct('Ci', zeros(2,2), ...
+             'Ci_kamu', zeros(2,2), ...
              'mu', zeros(2,1));
 
 out.Ci = zeros(2,2);
+out.Ci_kamu = zeros(2,2);
 out.mu = X;
 
 %field of view contains the point
@@ -37,7 +39,8 @@ X_c_h = cam.RT * X_w_h;
 x = X_c_h(1);
 y = X_c_h(2);
 
-alfa = cart2pol(x,y);
+% angle from the y axis
+alfa = cart2pol(y,-x);
 
 if useDetectAngle
     sig = t * cos(alfa)^2 / cam.f_mm * cam.e_mm;
@@ -45,17 +48,17 @@ else
     sig = t / cam.f_mm * cam.e_mm;
 end
 
-Ci = [ 0     0    ;
-       0  1/sig^2 ] ;
+Ci = [ 1/sig^2  0 ;
+          0     0 ] ;
 
 %cinti2013 conference article: two cameras, one observed point, figure
-Ci_kamu = [ 0.01/sig^2     0    ;
-                  0     1/sig^2 ] ;
+Ci_kamu = [ 1/sig^2        0    ;
+               0     0.01/sig^2 ] ;
 
-%Ci <= camera <= world
-Rot = Rot2D(-alfa) * cam.R;
+%Ci => camera => world
+Rot = cam.R' * Rot2D(alfa);
 
-out.Ci = Rot' * Ci * Rot;
-out.Ci_kamu = Rot' * Ci_kamu * Rot;
+out.Ci = Rot * Ci * Rot';
+out.Ci_kamu = Rot * Ci_kamu * Rot';
 out.mu = X;
 

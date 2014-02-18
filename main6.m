@@ -1,9 +1,18 @@
 function [] = main6()
 
-% calculate the resulting covariance matrix
-% in case of one specific observed point
-% with the cameras and measurement setup
+% the standard deviation of marker location estimations,
+% shown for the 3 axes separately
+% the cameras and measurement setup is defined
 % in the ICSSE_2013 publication
+
+% Rt: world => camera
+% Rt = inv(m) = [ R t ;
+%                 0 1]
+% m: camera => world
+% m = inv(Rt) = [ R' -R'*t ;
+%                 0    1   ]
+% campos = -R'*t;
+% camori = R' * [0;0;1];
 
 close all
 clear
@@ -95,11 +104,14 @@ hold off
 % for one camera and one observed point
 % the result is given in the world coordinate system
 function Ciw = calc_Ci(m, p)
-Rt=inv(m); % transformation: world => camera
-R = Rt(1:3,1:3); % rotation
-t = Rt(1:3,4); % translation
-campos = -R'*t;
-camori = R' * [0;0;1];
+R = m(1:3,1:3)';
+t = -R*m(1:3,4);
+
+Rt = [ R t ; zeros(1,3) 1];
+pw = p;
+pwh = [pw ; 1];
+pch = Rt*pwh;
+pc = pch(1:3);
 
 % from ps3eye_intrinsics_red.xml (Avg_Reprojection_Error, Camera_Matrix)
 e = 0.7758;
@@ -108,23 +120,13 @@ fy = 789.1510;
 cx = 319.5;
 cy = 239.5;
 
-v = p-campos;
-x = 0; % fx = fy = f, symmetric, it can be zero
-[z y d] = cart2sph(v(1), v(2), v(3));
-y = -y; % elevation from xy plane, but clockwise around y axis
-
-%  cam -> world
-%      ->  x
-%   x  ->  y
-%   y  ->  z
-sigy = d * e / fx;
-sigz = d * e / fy;
+d = norm(pc);
+sigx = d * e / fx;
+sigy = d * e / fy;
+six = sigx^(-2);
 siy = sigy^(-2);
-siz = sigz^(-2);
-Ci = diag([0,siy,siz]);
+Ci = diag([six,siy,0]);
 
+Rot = R' * Rot3Dz2vect(pc);
+Ciw = Rot*Ci*Rot';
 
-Rz = [cos(z) -sin(z) 0 ; sin(z) cos(z) 0 ; 0 0 1];
-Ry = [cos(y) 0 sin(y) ; 0 1 0 ; -sin(y) 0 cos(y)];
-Rx = [1 0 0 ; 0 cos(x) -sin(x) ; 0 sin(x) cos(x)];
-Ciw = Rz*Ry*Rx*Ci*Rx'*Ry'*Rz';
