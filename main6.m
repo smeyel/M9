@@ -26,12 +26,21 @@ LocationEffectiveStdAll = indata(:,21);
 
 
 
-% camera positions
 % from the ICSSE_2013 publication
-% from the log
-t0 = [-674.3543 ; 263.9349 ; -677.6962];
-t1 = [871.0314 ; -266.2977 ; -522.8290];
-t2 = [-28.0911 ; -265.4436 ; -758.5166];
+% T matrices from the cpp program print
+% transformation: camera => world
+m0 = [-0.69097477,  -0.13459364,  0.71023828, -674.35431;
+       0.011185364, -0.98438656, -0.17566407,  263.93491;
+       0.72279227,  -0.11343517,  0.68169177, -677.69617;
+       0,            0,           0,             1];
+m1 = [-0.70978242,  -0.21733436, -0.67005581,  871.03137;
+      -0.080154344, -0.92011875,  0.38334945, -266.29767;
+      -0.69984591,   0.32580256,  0.63566369, -522.82904;
+       0,            0,           0,             1];
+m2 = [-0.97232783,   0.11579948, 0.20290148,  -28.091051;
+      -0.020656202, -0.90772098, 0.41906551, -265.4436;
+       0.23270552,   0.40327793, 0.88499433, -758.5166;
+       0,            0,          0,             1];
 
 means = LocationMean3Ray;
 cc = max(size(means)); % column count
@@ -45,9 +54,9 @@ for i=1:cc
         sigres = [0;0;0];
     else
         % covariance matrix inverses and the resulting covariace matrix
-        Ciw0 = calc_Ci(t0, p);
-        Ciw1 = calc_Ci(t1, p);
-        Ciw2 = calc_Ci(t2, p);
+        Ciw0 = calc_Ci(m0, p);
+        Ciw1 = calc_Ci(m1, p);
+        Ciw2 = calc_Ci(m2, p);
         Ciw = Ciw0 + Ciw1 + Ciw2;
         Cw = inv(Ciw);
 
@@ -85,7 +94,12 @@ hold off
 % calculate the inverse of the covariance matrix
 % for one camera and one observed point
 % the result is given in the world coordinate system
-function Ciw = calc_Ci(t, p)
+function Ciw = calc_Ci(m, p)
+Rt=inv(m); % transformation: world => camera
+R = Rt(1:3,1:3); % rotation
+t = Rt(1:3,4); % translation
+campos = -R'*t;
+camori = R' * [0;0;1];
 
 % from ps3eye_intrinsics_red.xml (Avg_Reprojection_Error, Camera_Matrix)
 e = 0.7758;
@@ -94,7 +108,7 @@ fy = 789.1510;
 cx = 319.5;
 cy = 239.5;
 
-v = p-t;
+v = p-campos;
 x = 0; % fx = fy = f, symmetric, it can be zero
 [z y d] = cart2sph(v(1), v(2), v(3));
 y = -y; % elevation from xy plane, but clockwise around y axis
