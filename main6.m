@@ -87,21 +87,6 @@ legend('X','Y','Z');
 xlabel('Location index');
 ylabel('Standard deviation');
 
-return
-
-
-% figure
-figure
-hold on
-error_ellipse(Cw, p, 'conf', 0.95);
-scatter3(t0(1),t0(2),t0(3), 'r', 'filled');
-scatter3(t1(1),t1(2),t1(3), 'g', 'filled');
-scatter3(t2(1),t2(2),t2(3), 'b', 'filled');
-axis('equal');
-xlabel('x');
-ylabel('y');
-zlabel('z');
-hold off
 
 
 % calculate the inverse of the covariance matrix
