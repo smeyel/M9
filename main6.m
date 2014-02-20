@@ -18,6 +18,10 @@ close all
 clear
 clc
 
+global useDetectAngle
+useDetectAngle = true;
+
+
 myAddPath
 
 indata = dlmread('M1R1_stableframeDataProcessor_stats.csv',' ');
@@ -120,13 +124,19 @@ fy = 789.1510;
 cx = 319.5;
 cy = 239.5;
 
-d = norm(pc);
-sigx = d * e / fx;
-sigy = d * e / fy;
+[Rotc x y d] = Rot3Dz2vect(pc); % rotation in the camera coord. system
+global useDetectAngle
+if useDetectAngle
+    sigx = d * e / fx * cos(y)^2;
+    sigy = d * e / fy * cos(x)^2;
+else
+    sigx = d * e / fx;
+    sigy = d * e / fy;
+end
 six = sigx^(-2);
 siy = sigy^(-2);
 Ci = diag([six,siy,0]);
 
-Rot = R' * Rot3Dz2vect(pc);
+Rot = R' * Rotc;
 Ciw = Rot*Ci*Rot';
 
