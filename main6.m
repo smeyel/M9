@@ -1,13 +1,26 @@
 function [] = main6()
 
-% calculate the resulting covariance matrix
-% in case of one specific observed point
-% with the cameras and measurement setup
+% the standard deviation of marker location estimations,
+% shown for the 3 axes separately
+% the cameras and measurement setup is defined
 % in the ICSSE_2013 publication
+
+% Rt: world => camera
+% Rt = inv(m) = [ R t ;
+%                 0 1]
+% m: camera => world
+% m = inv(Rt) = [ R' -R'*t ;
+%                 0    1   ]
+% campos = -R'*t;
+% camori = R' * [0;0;1];
 
 close all
 clear
 clc
+
+global useDetectAngle
+useDetectAngle = true;
+
 
 myAddPath
 
@@ -26,12 +39,21 @@ LocationEffectiveStdAll = indata(:,21);
 
 
 
-% camera positions
 % from the ICSSE_2013 publication
-% from the log
-t0 = [-674.3543 ; 263.9349 ; -677.6962];
-t1 = [871.0314 ; -266.2977 ; -522.8290];
-t2 = [-28.0911 ; -265.4436 ; -758.5166];
+% T matrices from the cpp program print
+% transformation: camera => world
+m0 = [-0.69097477,  -0.13459364,  0.71023828, -674.35431;
+       0.011185364, -0.98438656, -0.17566407,  263.93491;
+       0.72279227,  -0.11343517,  0.68169177, -677.69617;
+       0,            0,           0,             1];
+m1 = [-0.70978242,  -0.21733436, -0.67005581,  871.03137;
+      -0.080154344, -0.92011875,  0.38334945, -266.29767;
+      -0.69984591,   0.32580256,  0.63566369, -522.82904;
+       0,            0,           0,             1];
+m2 = [-0.97232783,   0.11579948, 0.20290148,  -28.091051;
+      -0.020656202, -0.90772098, 0.41906551, -265.4436;
+       0.23270552,   0.40327793, 0.88499433, -758.5166;
+       0,            0,          0,             1];
 
 means = LocationMean3Ray;
 cc = max(size(means)); % column count
@@ -45,9 +67,9 @@ for i=1:cc
         sigres = [0;0;0];
     else
         % covariance matrix inverses and the resulting covariace matrix
-        Ciw0 = calc_Ci(t0, p);
-        Ciw1 = calc_Ci(t1, p);
-        Ciw2 = calc_Ci(t2, p);
+        Ciw0 = calc_Ci(m0, p);
+        Ciw1 = calc_Ci(m1, p);
+        Ciw2 = calc_Ci(m2, p);
         Ciw = Ciw0 + Ciw1 + Ciw2;
         Cw = inv(Ciw);
 
@@ -85,7 +107,15 @@ hold off
 % calculate the inverse of the covariance matrix
 % for one camera and one observed point
 % the result is given in the world coordinate system
-function Ciw = calc_Ci(t, p)
+function Ciw = calc_Ci(m, p)
+R = m(1:3,1:3)';
+t = -R*m(1:3,4);
+
+Rt = [ R t ; zeros(1,3) 1];
+pw = p;
+pwh = [pw ; 1];
+pch = Rt*pwh;
+pc = pch(1:3);
 
 % from ps3eye_intrinsics_red.xml (Avg_Reprojection_Error, Camera_Matrix)
 e = 0.7758;
@@ -94,23 +124,19 @@ fy = 789.1510;
 cx = 319.5;
 cy = 239.5;
 
-v = p-t;
-x = 0; % fx = fy = f, symmetric, it can be zero
-[z y d] = cart2sph(v(1), v(2), v(3));
-y = -y; % elevation from xy plane, but clockwise around y axis
-
-%  cam -> world
-%      ->  x
-%   x  ->  y
-%   y  ->  z
-sigy = d * e / fx;
-sigz = d * e / fy;
+[Rotc x y d] = Rot3Dz2vect(pc); % rotation in the camera coord. system
+global useDetectAngle
+if useDetectAngle
+    sigx = d * e / fx * cos(y)^2;
+    sigy = d * e / fy * cos(x)^2;
+else
+    sigx = d * e / fx;
+    sigy = d * e / fy;
+end
+six = sigx^(-2);
 siy = sigy^(-2);
-siz = sigz^(-2);
-Ci = diag([0,siy,siz]);
+Ci = diag([six,siy,0]);
 
+Rot = R' * Rotc;
+Ciw = Rot*Ci*Rot';
 
-Rz = [cos(z) -sin(z) 0 ; sin(z) cos(z) 0 ; 0 0 1];
-Ry = [cos(y) 0 sin(y) ; 0 1 0 ; -sin(y) 0 cos(y)];
-Rx = [1 0 0 ; 0 cos(x) -sin(x) ; 0 sin(x) cos(x)];
-Ciw = Rz*Ry*Rx*Ci*Rx'*Ry'*Rz';

@@ -33,8 +33,8 @@ useFoV=false;
 displayArea = [0 150 -60 70];
 
 
-cam(1) = CreateCamera(-pi/4, [10;10]);
-cam(2) = CreateCamera(pi/4, [10;-10]);
+cam(1) = CreateCamera([1;-1], [10;10]);
+cam(2) = CreateCamera([1;1], [10;-10]);
 
 gX = 50;
 gY = 0;
@@ -60,7 +60,7 @@ f{9} = subs(f{8}, a, 1) + a * [-15 ; 0];
 %% objective function values for the contour plot
 
 [nX,nY] = meshgrid(85:1:100, -50:1:50);
-nsCovRes = arrayfun(@(nx,ny) CalculateResultingCovariance([cam,CreateCamera(cart2pol(gX-nx, gY-ny),[nx;ny])], [gX;gY]), ...
+nsCovRes = arrayfun(@(nx,ny) CalculateResultingCovariance([cam,CreateCamera([gX-nx;gY-ny],[nx;ny])], [gX;gY]), ...
     nX, nY);
 nW = arrayfun(@(covres) det(covres.Ci), nsCovRes);
 
@@ -204,7 +204,7 @@ function f = objfunc(cam, gX, gY, x)
 % objective function, it has to be minimized
 nx = x(1);
 ny = x(2);
-nsCovRes = CalculateResultingCovariance([cam,CreateCamera(cart2pol(gX-nx, gY-ny),[nx;ny])], [gX;gY]);
+nsCovRes = CalculateResultingCovariance([cam,CreateCamera([gX-nx;gY-ny],[nx;ny])], [gX;gY]);
 nW = det(nsCovRes.Ci);
 f = -nW;
 

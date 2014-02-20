@@ -44,8 +44,8 @@ displayArea = [0 150 -60 70];
 
 % --- camera ---
 %the location and oreientation of the cameras
-cam(1) = CreateCamera(-pi/4, [10;10]);
-cam(2) = CreateCamera(pi/4, [10;-10]);
+cam(1) = CreateCamera([1;-1], [10;10]);
+cam(2) = CreateCamera([1;1], [10;-10]);
 
 
 % --- grid ---
@@ -99,8 +99,7 @@ nArea = [min(min(nX)) min(min(nY)) ; ...
 %at one of the corners of the new camera rectangle
 wX = max(max(nX));
 wY = min(min(nY));
-wAlpha = cart2pol(dmX-wX, dmY-wY);
-wCam = CreateCamera(wAlpha,[wX;wY]);
+wCam = CreateCamera([dmX-wX;dmY-wY],[wX;wY]);
 
 
 
@@ -135,7 +134,7 @@ rdYX = repmat(reshape(dYX, [size(dYX), 1, 1]), [1, 1, size(nX)]);
 rnX = repmat(reshape(nX, [1, 1, size(nX)]), [size(gX), 1, 1]);
 rnY = repmat(reshape(nY, [1, 1, size(nY)]), [size(gY), 1, 1]);
 
-rngsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera(cart2pol(dmX-nx, dmY-ny),[nx;ny])], [gx;gy]), ...
+rngsCovRes = arrayfun(@(gx,gy,nx,ny) CalculateResultingCovariance([cam,CreateCamera([dmX-nx;dmY-ny],[nx;ny])], [gx;gy]), ...
     rgX, rgY, rnX, rnY);
 rngW = arrayfun(@(covres) det(covres.Ci), rngsCovRes);
 rngdW = rngW .* rdYX;
@@ -168,8 +167,7 @@ m1=I1(1, m2);
 
 mX = nX(m1,m2);
 mY = nY(m1,m2);
-mAlpha = cart2pol(dmX-mX, dmY-mY);
-mCam = CreateCamera(mAlpha,[mX;mY]);
+mCam = CreateCamera([dmX-mX;dmY-mY],[mX;mY]);
 
 mgsCovRes = rngsCovRes(:,:,m1,m2);
 mgW = rngW(:,:,m1,m2);

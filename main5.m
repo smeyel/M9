@@ -1,5 +1,9 @@
 function [] = main5()
 
+% ----------
+% OBSOLETE BECAUSE OF THE CAMERA COORD. SYSTEM CONVERSION
+% FACING DIRECTION IS THE LAST DIMENSION, NOT THE X
+% ----------
 % file for trying the actual problem
 % 3D
 % objective function: the smallest eigenvalue

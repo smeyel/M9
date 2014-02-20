@@ -1,11 +1,20 @@
-function R = Rot3D(ax, ay, az)
+function R = Rot3D(axis, angle)
 
-% ax, ay, az: rotation angles around the axes, respectively
+% axis: 'x' or 'y' or 'z'
+% angle
 % R: 3x3 matrix
 % usage: R * C * R'
+% usage: R * p
 
-Rz = [cos(az) -sin(az) 0 ; sin(az) cos(az) 0 ; 0 0 1];
-Ry = [cos(ay) 0 sin(ay) ; 0 1 0 ; -sin(ay) 0 cos(ay)];
-Rx = [1 0 0 ; 0 cos(ax) -sin(ax) ; 0 sin(ax) cos(ax)];
+if strcmpi(axis, 'x')
+    R = [1 0 0 ; 0 cos(angle) -sin(angle) ; 0 sin(angle) cos(angle)];
 
-R = Rz*Ry*Rx;
+elseif strcmpi(axis, 'y')
+    R = [cos(angle) 0 sin(angle) ; 0 1 0 ; -sin(angle) 0 cos(angle)];
+
+elseif strcmpi(axis, 'z')
+    R = [cos(angle) -sin(angle) 0 ; sin(angle) cos(angle) 0 ; 0 0 1];
+
+else
+    error(['No axis named: ' axis])
+end
