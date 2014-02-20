@@ -1,10 +1,23 @@
-function Ciw = calc_Ci(cam, pw)
+function [Ciw Ciws] = calc_Ci(cams, pw)
 
 % calculate the inverse of the covariance matrix
 % for one camera and one observed point
 % the result is given in the world coordinate system
-% cam: camera struct
+% cams: cell containing camera structs
 % pw: point coordinate vector in the world coordinate system
+% Ciw: inverse of the resulting covariance matrix
+% Ciws: cell containing the inverses of the covariance matrices
+
+% if only one camera is given, a cell is formulated
+if isstruct(cams)
+    cams = {cams};
+end
+
+Ciws = cellfun(@(cam) calc_Ciw_single(cam,pw), cams, 'UniformOutput', false);
+Ciw = sum(cat(3,Ciws{:}),3);
+
+
+function Ciw = calc_Ciw_single(cam, pw)
 
 w2c = cam.w2c;
 e = cam.e;

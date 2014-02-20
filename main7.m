@@ -38,8 +38,8 @@ for i = 1:numel(dataNames)
 end
 
 
-% it has to be maximized
-nW = arrayfun(@(nx,ny,nz) calc_measure(cams, [nx;ny;nz]), nx, ny, nz);
+% measure, it has to be maximized
+nW = arrayfun(@(nx,ny,nz) min(eig(calc_Ci(cams, [nx;ny;nz]))), nx, ny, nz);
 
 figure
 hold on
@@ -53,11 +53,3 @@ xlabel('x');
 ylabel('y');
 zlabel('z');
 hold off
-
-
-
-function f = calc_measure(cams, p)
-Ciws = cellfun(@(cam) calc_Ci(cam, p), cams, 'UniformOutput', false);
-Ciw = sum(cat(3,Ciws{:}),3);
-%Cw = inv(Ciw);
-f = min(eig(Ciw));
