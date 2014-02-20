@@ -35,7 +35,7 @@ for i=1:cc
         sigres = [0;0;0];
     else
         % covariance matrix inverses and the resulting covariace matrix
-        Ciw = calc_Ci(cams, p);
+        Ciw = calc_Ciw(cams, p);
         Cw = inv(Ciw);
 
         % variance in the x-y-z directions

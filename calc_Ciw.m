@@ -1,6 +1,6 @@
-function [Ciw Ciws] = calc_Ci(cams, pw)
+function [Ciw Ciws] = calc_Ciw(cams, pw)
 
-% calculate the inverse of the covariance matrix
+% calculate the inverse of the resulting covariance matrix
 % for one camera and one observed point
 % the result is given in the world coordinate system
 % cams: cell containing camera structs

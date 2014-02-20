@@ -28,7 +28,7 @@ cams = {CreateCamera('oripos', eye(3), [-1000; 0; 0]), ...
 
 
 % measure, it has to be maximized
-nW = arrayfun(@(nx,ny,nz) min(eig(calc_Ci(cams, [nx;ny;nz]))), nx, ny, nz);
+nW = arrayfun(@(nx,ny,nz) min(eig(calc_Ciw(cams, [nx;ny;nz]))), nx, ny, nz);
 
 figure
 hold on
