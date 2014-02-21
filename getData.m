@@ -29,6 +29,10 @@ elseif strcmp(from, 'M1R1_stats')
     data.LocationEffectiveStd3Ray = indata(:,20);
     data.LocationEffectiveStdAll = indata(:,21);
 elseif strcmp(from, 'ps3eye_intrinsics_red.xml')
+    % image_Width
+    data.width = 640;
+    % image_Height
+    data.height = 480;
     % Avg_Reprojection_Error
     data.e = 0.7758;
     % Camera_Matrix
