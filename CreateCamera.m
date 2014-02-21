@@ -85,6 +85,19 @@ for i = 1:numel(dataNames)
 end
 
 
+% some matrices from the camera data for the distortion calculation
+if dim == 3
+    cam.A = [ cam.fx    0     cam.cx ; ...
+                0     cam.fy  cam.cy ; ...
+                0       0       1    ];
+else
+    cam.A = [ cam.fx  cam.cx ; ...
+                0       1 ];
+end
+cam.iR = inv(cam.A * cam.R);
+cam.ir = reshape(cam.iR', 1, numel(cam.iR));
+
+
 
 function validate_dim(dim)
 if dim < 2 || 3 < dim
