@@ -23,8 +23,8 @@ gz = -1000:200:1000;
 [nx,ny,nz] = meshgrid(gx,gy,gz);
 
 
-cams = {CreateCamera('oripos', eye(3), [-1000; 0; 0]), ...
-        CreateCamera('oripos', eye(3), [1000; 0; 0])};
+cams = {CreateCamera('oripos', [1;1;0], [-1000; 0; 0]), ...
+        CreateCamera('oripos', [-1;1;0], [1000; 0; 0])};
 
 
 % measure, it has to be maximized
