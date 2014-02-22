@@ -10,7 +10,7 @@ clear
 clc
 
 global useDetectAngle
-useDetectAngle = false;
+useDetectAngle = true;
 
 
 myAddPath
@@ -26,6 +26,7 @@ means = data.LocationMean3Ray;
 
 cc = max(size(means)); % column count
 TheoryLocationStd = zeros(cc,3);
+TheoryLocationMeasure = zeros(cc);
 for i=1:cc
 
     % observed point
@@ -41,11 +42,14 @@ for i=1:cc
         % variance in the x-y-z directions
         [V D] = eig(Cw);
         sigres = V.^2 * diag(D);
+        measure = max(diag(D));
     end
     TheoryLocationStd(i,1:3) = sigres';
+    TheoryLocationMeasure(i) = measure;
 
 end
 
+figure
 bar(TheoryLocationStd(:,:));
 axis([1 size(TheoryLocationStd,1) 0 5]);
 legend('X','Y','Z');
@@ -53,4 +57,11 @@ xlabel('Location index');
 ylabel('Standard deviation');
 daspect([3 1 1])
 set(gca, 'ytick', 0:0.5:5)
+
+figure
+bar(TheoryLocationMeasure(:));
+axis([1 size(TheoryLocationMeasure,1) 0 1.5]);
+legend('measure');
+xlabel('Location index');
+ylabel('Measure');
 
