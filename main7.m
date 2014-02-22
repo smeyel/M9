@@ -48,7 +48,12 @@ shading flat
 DrawCamera(cams{1}, 'r');
 DrawCamera(cams{2}, 'g');
 DrawCamera(cams{3}, 'b');
-%axis('equal');
+grid on
+axis('equal')
+view(-165,-65)
+xlim([-700,1000])
+ylim([-300,300])
+zlim([-800,300])
 xlabel('x');
 ylabel('y');
 zlabel('z');

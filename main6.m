@@ -51,4 +51,6 @@ axis([1 size(TheoryLocationStd,1) 0 5]);
 legend('X','Y','Z');
 xlabel('Location index');
 ylabel('Standard deviation');
+daspect([3 1 1])
+set(gca, 'ytick', 0:0.5:5)
 
