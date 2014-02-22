@@ -17,6 +17,7 @@ function cam = CreateCamera(varargin)
 % camori = R' * [0;0;1];
 
 cam = struct(...
+  'dim', 0, ...
   'R', 0, ...
   't', 0, ...
   'ori', 0, ...
@@ -70,6 +71,7 @@ while ii <= length(varargin)
     end
 end
 
+cam.dim = dim;
 cam.ori = ori/norm(ori);
 cam.pos = pos;
 cam.R = R;
@@ -86,7 +88,7 @@ end
 
 
 % some matrices from the camera data for the distortion calculation
-if dim == 3
+if cam.dim == 3
     cam.A = [ cam.fx    0     cam.cx ; ...
                 0     cam.fy  cam.cy ; ...
                 0       0       1    ];
