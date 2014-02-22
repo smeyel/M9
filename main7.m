@@ -45,9 +45,9 @@ figure
 hold on
 slice(nx,ny,nz,nW,gx,gy,gz)
 shading flat
-scatter3(cams{1}.pos(1), cams{1}.pos(2), cams{1}.pos(3), 'r', 'filled');
-scatter3(cams{2}.pos(1), cams{2}.pos(2), cams{2}.pos(3), 'g', 'filled');
-scatter3(cams{3}.pos(1), cams{3}.pos(2), cams{3}.pos(3), 'b', 'filled');
+DrawCamera(cams{1}, 'r');
+DrawCamera(cams{2}, 'g');
+DrawCamera(cams{3}, 'b');
 %axis('equal');
 xlabel('x');
 ylabel('y');

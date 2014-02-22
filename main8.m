@@ -34,8 +34,8 @@ figure
 hold on
 contourslice(nx,ny,nz,nW,[],[],gz)
 shading flat
-scatter3(cams{1}.pos(1), cams{1}.pos(2), cams{1}.pos(3), 'r', 'filled');
-scatter3(cams{2}.pos(1), cams{2}.pos(2), cams{2}.pos(3), 'g', 'filled');
+DrawCamera(cams{1}, 'r');
+DrawCamera(cams{2}, 'g');
 axis('equal');
 xlabel('x');
 ylabel('y');
