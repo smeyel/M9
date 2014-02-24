@@ -40,9 +40,34 @@ for i=1:cc
         Ciw = calc_Ciw(cams, p);
         Cw = inv(Ciw);
 
-        % variance in the x-y-z directions
+        % deviation in the w direction:
+        % w: column vector, the requested direction
+        % v(i): column vectors, the eigenvectors of the covariance matrix
+        % d(i): number, the variances in the v(i) directions
+        % V: matrix, the v(i) vectors are its column vectors
+        % D: matrix, diagonal matrix with d(i) elements
+        % sig2w: number, the variation in the w direction
+        % sigw: number, the deviation in the w direction
+        % sig2w = sum( d(i)^2 * (v(i)*w)^2 ) =
+        %       = [d(1);d(2);d(3)]'.^2 * ([v(1);v(2);v(3)]'*w).^2 =
+        %       = (w'*[v(1);v(2);v(3)]).^2 * [d(1);d(2);d(3)].^2 =
+        %       = (w'*V).^2 * diag(D)
+        % sigw = sqrt(sig2w) = sqrt( (w'*V).^2 * diag(D) )
+        % diag(D) is a column vector and it multiplies one row vector
+        % the result is a number
+        %
+        % deviation in the w1-w2-w3 directions:
+        % W: matrix, the wi vectors are its column vectors
+        % sig2W: column vector, the variations in the w1-w2-w3 direction
+        % sigW: column vector, the deviations in the w1-w2-w3 direction
+        % sig2W = ([w1;w2;w3]'*V).^2 * diag(D) =
+        %       = (W'*V).^2 * diag(D)
+        % sigW = sqrt(sig2W) = sqrt( (W'*V).^2 * diag(D) )
+        %
+        % deviation in the x-y-z directions
+        % W = eye(3)
         [V D] = eig(Cw);
-        sigres = V.^2 * diag(D);
+        sigres = sqrt( V.^2 * diag(D) );
         measure = max(diag(D));
     end
     TheoryLocationStd(i,1:3) = sigres';
