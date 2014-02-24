@@ -23,6 +23,7 @@ end
 
 data = getData('M1R1_stats');
 means = data.LocationMean3Ray;
+stdall = data.LocationStdAll;
 
 cc = max(size(means)); % column count
 TheoryLocationStd = zeros(cc,3);
@@ -48,6 +49,15 @@ for i=1:cc
     TheoryLocationMeasure(i) = measure;
 
 end
+
+figure
+bar(stdall(:,[1 3 2]));
+axis([1 size(stdall,1) 0 5]);
+legend('X','Y','Z');
+xlabel('Location index');
+ylabel('Standard deviation');
+daspect([3 1 1])
+set(gca, 'ytick', 0:0.5:5)
 
 figure
 bar(TheoryLocationStd(:,:));
