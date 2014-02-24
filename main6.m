@@ -34,7 +34,7 @@ for i=1:cc
     p = means(i,:)';
 
     if any(isnan(p))
-        sigres = [0;0;0];
+        sigres = [NaN;NaN;NaN];
     else
         % covariance matrix inverses and the resulting covariace matrix
         Ciw = calc_Ciw(cams, p);
@@ -67,6 +67,16 @@ xlabel('Location index');
 ylabel('Standard deviation');
 daspect([3 1 1])
 set(gca, 'ytick', 0:0.5:5)
+
+diffstd = stdall(:,[1 3 2]) - TheoryLocationStd;
+figure
+bar(diffstd(:,:));
+axis([1 size(diffstd,1) -1 1.5]);
+legend('X','Y','Z');
+xlabel('Location index');
+ylabel('Standard deviation');
+daspect([6 1 1])
+set(gca, 'ytick', -1:0.5:1.5)
 
 figure
 bar(TheoryLocationMeasure(:));
