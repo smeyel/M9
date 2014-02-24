@@ -10,7 +10,7 @@ clear
 clc
 
 global useDetectAngle
-useDetectAngle = true;
+useDetectAngle = false;
 
 
 myAddPath
