@@ -28,6 +28,32 @@ elseif strcmp(from, 'M1R1_stats')
     data.LocationEffectiveStd2Ray = indata(:,19);
     data.LocationEffectiveStd3Ray = indata(:,20);
     data.LocationEffectiveStdAll = indata(:,21);
+elseif strcmp(from, 'M1b_out')
+    indata = dlmread('m1b_1_out.csv',';');
+    data.valid{1} = indata(:,1);
+    data.x{1} = indata(:,2);
+    data.y{1} = indata(:,3);
+    indata = dlmread('m1b_2_out.csv',';');
+    data.valid{2} = indata(:,1);
+    data.x{2} = indata(:,2);
+    data.y{2} = indata(:,3);
+    indata = dlmread('m1b_3_out.csv',';');
+    data.valid{3} = indata(:,1);
+    data.x{3} = indata(:,2);
+    data.y{3} = indata(:,3);
+elseif strcmp(from, 'M1b_out_dist')
+    indata = dlmread('m1b_1_dist_out.csv',';');
+    data.valid{1} = indata(:,1);
+    data.x{1} = indata(:,2);
+    data.y{1} = indata(:,3);
+    indata = dlmread('m1b_2_dist_out.csv',';');
+    data.valid{2} = indata(:,1);
+    data.x{2} = indata(:,2);
+    data.y{2} = indata(:,3);
+    indata = dlmread('m1b_3_dist_out.csv',';');
+    data.valid{3} = indata(:,1);
+    data.x{3} = indata(:,2);
+    data.y{3} = indata(:,3);
 elseif strcmp(from, 'ps3eye_intrinsics_red.xml')
     % image_Width
     data.width = 640;
