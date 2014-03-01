@@ -50,27 +50,25 @@ wx(:,end) = 1;
 wy = ones(sy, sx)/2;
 wy(1,:) = 1;
 wy(end,:) = 1;
-plus_sigx = ones(sy, sx) - wx.*(xm1+xp1);
-plus_sigy = ones(sy, sx) - wy.*(ym1+yp1);
+mult_sigx = 1 ./ (wx.*(xm1+xp1));
+mult_sigy = 1 ./ (wy.*(ym1+yp1));
 
 figure
-mesh(plus_sigx)
+mesh(mult_sigx)
 figure
-mesh(plus_sigy)
+mesh(mult_sigy)
 
-sigx = ones(sy, sx) * cam.e;
 x = 1:cam.width;
 px = cos(atan((x-cam.cx)/cam.fx)).^2;
 px = repmat(px, cam.height, 1);
-sig_newx = sigx.*px+plus_sigx;
+sig_newx = mult_sigx.*px;
 figure
 mesh(sig_newx)
 
-sigy = ones(sy, sx) * cam.e;
 y = (1:cam.height)';
 py = cos(atan((y-cam.cy)/cam.fy)).^2;
 py = repmat(py, 1, cam.width);
-sig_newy = sigy.*py+plus_sigy;
+sig_newy = mult_sigy.*py;
 figure
 mesh(sig_newy)
 
