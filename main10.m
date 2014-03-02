@@ -12,31 +12,41 @@ myAddPath
 version = 1;
 xu = getX('M1b_out', version);
 xd = getX('M1b_out_dist', version);
+x = xu;
 
+width_eff = max(x)-min(x);
 width = 640;
 
 
 % raw data
 figure
-plot(xu);
-figure
-plot(xd);
+plot(x);
 
 % moving average
-count = numel(xu);
-window = floor(count / width);
-simple = tsmovavg(xu,'s',window,1);
+count = numel(x);
+window= round(count / width_eff / 2);
+simple = tsmovavg(x,'s',window,1);
+simple = round(simple);
 half=floor(window/2);
 simple=[simple(half+1:end) ; simple(1:half)]; % shift with a half window
+for ii = 1:numel(simple)
+    simple(ii) = min(simple(ii:end));
+end
+
 figure
 hold on
-plot(simple, 'g');
-plot(xu, 'b');
+plot(x, 'b');
+plot(simple, 'r');
 hold off
 
-% raw data differences from the moving average
+
+% step widths
+steps = zeros(width,1);
+for ii = 1:numel(steps)
+    steps(ii) = numel(simple(simple==ii));
+end
 figure
-plot(simple-xu);
+plot(steps);
 
 
 
