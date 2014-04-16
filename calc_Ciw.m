@@ -24,23 +24,37 @@ e = cam.e;
 fx = cam.fx;
 fy = cam.fy;
 R = cam.R;
+dim = cam.dim;
 
 pwh = [pw ; 1];
 pch = w2c * pwh;
 pc = pch(1:end-1);
 
-[Rotc x y d] = Rot3Dz2vect(pc); % rotation in the camera coord. system
 global useDetectAngle
-if useDetectAngle
-    sigx = d * e / fx * cos(y)^2;
-    sigy = d * e / fy * cos(x)^2;
+if dim == 3
+    [Rotc x y d] = Rot3Dz2vect(pc); % rotation in the camera coord. system
+    if useDetectAngle
+        sigx = d * e / fx * cos(y)^2;
+        sigy = d * e / fy * cos(x)^2;
+    else
+        sigx = d * e / fx;
+        sigy = d * e / fy;
+    end
+    six = sigx^(-2);
+    siy = sigy^(-2);
+    Ci = diag([six,siy,0]);
 else
-    sigx = d * e / fx;
-    sigy = d * e / fy;
+    [Rotc x z d] = Rot3Dy2vect([pc;0]); % rotation in the camera coord. system
+    Rotc = Rotc(1:dim,1:dim);
+    if useDetectAngle
+        sigx = d * e / fx * cos(z)^2;
+    else
+        sigx = d * e / fx;
+    end
+    six = sigx^(-2);
+    Ci = diag([six,0]);
 end
-six = sigx^(-2);
-siy = sigy^(-2);
-Ci = diag([six,siy,0]);
+
 
 Rot = R' * Rotc;
 Ciw = Rot*Ci*Rot';
