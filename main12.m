@@ -36,7 +36,10 @@ objX = [0;0];
             
 hold on
 DrawCamera(cams)
-cellfun(@(p) plot(p(:,1),p(:,2)), polygon);
+%cellfun(@(p) plot(p(:,1),p(:,2)), polygon);
+plot(polygon{1}(:,1),polygon{1}(:,2))
+xopt = calc_opt_plane(cams, polygon{1}, objX);
+plot(xopt(1), xopt(2), 'r*')
 hold off
 
 
