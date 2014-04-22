@@ -31,6 +31,8 @@ polygon{3} = [ -600, 1500 ; ...
                    -400, 600 ];
 polygon = cellfun(@(p) [p;p(1,:)], polygon, 'uni', false);
 
+objX = [0;0];
+
             
 hold on
 DrawCamera(cams)
@@ -63,11 +65,14 @@ pre = x;
 stop = 0;
 
 
-function [xopt in] = calc_opt_plane(cams, polygon)
+function [xopt in] = calc_opt_plane(cams, polygon, objX)
+
+[R ee] = eig(calc_Ciw(cams, objX));
+ee = diag(ee);
+T = objX;
 
 if cams{1}.dim == 2
     F = (cams{1}.e/cams{1}.fx)^(-2);
-    ee =  eig(calc_Ciw(cams, zeros(cams{1}.dim,1)));
     E = abs(ee(2)-ee(1));
     D = ee(2)+ee(1);
     dist = sqrt(F/E);
