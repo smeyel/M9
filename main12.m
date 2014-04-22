@@ -68,10 +68,14 @@ function [xopt in] = calc_opt_plane(cams, polygon)
 if cams{1}.dim == 2
     F = (cams{1}.e/cams{1}.fx)^(-2);
     ee =  eig(calc_Ciw(cams, zeros(cams{1}.dim,1)));
-    E = ee(2)-ee(1);
+    E = abs(ee(2)-ee(1));
     D = ee(2)+ee(1);
     dist = sqrt(F/E);
-    xmax = [0;dist];
+    if ee(2)>ee(1)
+        xmax = [0;dist];
+    else
+        xmax = [dist;0];
+    end
 
     if inpolygon(xmax(1), xmax(2), polygon(:,1),polygon(:,2))
         xopt = xmax;
