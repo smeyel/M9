@@ -3,7 +3,8 @@ function [] = main12()
 % two camera observing the origin
 % a third camera is placed
 % fmincon in 2D
-% calc_opt_plane: object in origin and eigenvalues are parallel to the axes
+% calc_opt_plane: translation and rotation applied (on object, polygon)
+%   to get the default case (origin and eigenvectors parallel to the axes)
 %   2D OK, in the 3D case correction needed, TODO
 
 close all
@@ -69,10 +70,18 @@ stop = 0;
 
 
 function [xopt in] = calc_opt_plane(cams, polygon, objX)
+% polygon: array of vertices
 
+% Rotation and translation
 [R ee] = eig(calc_Ciw(cams, objX));
 ee = diag(ee);
 T = objX;
+
+% Transformation of the polygon to:
+% object in origin and eigenvalues are parallel to the axes
+polygon_cell = num2cell(polygon,2);
+p_cell = cellfun(@(p) (R'*(p'-T))', polygon_cell, 'uni', false);
+p = cell2mat(p_cell);
 
 if cams{1}.dim == 2
     F = (cams{1}.e/cams{1}.fx)^(-2);
@@ -85,11 +94,11 @@ if cams{1}.dim == 2
         xmax = [dist;0];
     end
 
-    if inpolygon(xmax(1), xmax(2), polygon(:,1),polygon(:,2))
+    if inpolygon(xmax(1), xmax(2), p(:,1),p(:,2))
         xopt = xmax;
         in = true;
     else
-        [XI,YI] = polyxpoly(polygon(:,1),polygon(:,2),[0;xmax(1)],[0;xmax(2)]);
+        [XI,YI] = polyxpoly(p(:,1),p(:,2),[0;xmax(1)],[0;xmax(2)]);
         if isempty(XI)
             xopt = xmax;
             in = false;
@@ -100,6 +109,8 @@ if cams{1}.dim == 2
             in = true;
         end
     end
+
+    xopt = R*xopt+T;
 
 else
 
@@ -116,7 +127,7 @@ else
         [], ... %nonlcon
         optimset('OutputFcn', @outputfun)); %options
     plot(xopt(1), xopt(2), 'r*')
-    in = inpolygon(xopt(1), xopt(2), polygon(:,1),polygon(:,2));
+    in = inpolygon(xopt(1), xopt(2), p(:,1),p(:,2));
 
 end
 
