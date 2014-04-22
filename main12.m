@@ -56,6 +56,13 @@ xopt
 myfun(cams, xopt)
 
 
+if inpolygon(xopt(1), xopt(2), constraints(:,1),constraints(:,2))
+    disp('IN')
+else
+    disp('OUT')
+end
+
+
 return
 
 
