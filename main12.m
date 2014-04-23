@@ -45,6 +45,13 @@ DrawCamera(cams)
 %cellfun(@(p) plot(p(:,1),p(:,2),...
 %                  p(:,1),p(:,2),'g*'), polygon);
 
+polys = polygon;
+polys = add_intersections(polys, 1);
+polys = add_intersections(polys, 2);
+% plot all polys and all vertices of all polys
+cellfun(@(p) plot(p(:,1),p(:,2),...
+                  p(:,1),p(:,2),'g*'), polys);
+
 %cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
 %plot(polygon{1}(:,1),polygon{1}(:,2)) % plot the first polygon
 %xopts = calc_opt_plane(cams, polygon{1}, objX);
@@ -155,3 +162,33 @@ for n = 1:ss
 
 end
 
+
+function p_added = add_intersections(p, index)
+% p is a cell array of polygons
+% add the intersections to every polygon
+% intersection is if the coordinate at the index changes the sign
+
+% for every polygon in p
+for np=1:numel(p)
+    pa = p{np};
+    dim = size(pa,2);
+    spa = size(pa,1)-1;
+    % for every edge in pa
+    ac = 0; % added_count
+    p_added{np} = []; % empty
+    for n=1:spa
+        p_added{np} = [p_added{np} ; pa(n,:)]; % add begin vertex
+        i0 = pa(n,index);
+        i1 = pa(n+1,index);
+        % if sign change
+        if(sign(i0) ~= sign(i1))
+            l0 = abs(i0);
+            l1 = abs(i1);
+            x0 = pa(n,:);
+            x1 = pa(n+1,:);
+            new = x0 * l1/(l0+l1) + x1 * l0/(l0+l1);
+            p_added{np} = [p_added{np} ; new];
+        end
+    end
+    p_added{np} = [p_added{np} ; pa(spa+1,:)]; % add end vertex
+end
