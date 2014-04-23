@@ -39,8 +39,8 @@ hold on
 DrawCamera(cams)
 %cellfun(@(p) plot(p(:,1),p(:,2)), polygon);
 plot(polygon{1}(:,1),polygon{1}(:,2))
-xopt = calc_opt_plane(cams, polygon{1}, objX);
-plot(xopt(1), xopt(2), 'r*')
+xopts = calc_opt_plane(cams, polygon{1}, objX);
+plot(xopts(:,1), xopts(:,2), 'r*')
 hold off
 
 
@@ -69,7 +69,7 @@ pre = x;
 stop = 0;
 
 
-function [xopt in] = calc_opt_plane(cams, polygon, objX)
+function [xopts ins] = calc_opt_plane(cams, polygon, objX)
 % polygon: array of vertices
 
 % Rotation and translation
@@ -83,51 +83,67 @@ polygon_cell = num2cell(polygon,2);
 p_cell = cellfun(@(p) (R'*(p'-T))', polygon_cell, 'uni', false);
 p = cell2mat(p_cell);
 
-if cams{1}.dim == 2
-    F = (cams{1}.e/cams{1}.fx)^(-2);
-    E = abs(ee(2)-ee(1));
-    D = ee(2)+ee(1);
-    dist = sqrt(F/E);
-    if ee(2)>ee(1)
-        xmax = [0;dist];
-    else
-        xmax = [dist;0];
-    end
+% Cutting the polygon
+% polys: cell of polygons
+polys = {p};
 
-    if inpolygon(xmax(1), xmax(2), p(:,1),p(:,2))
-        xopt = xmax;
-        in = true;
-    else
-        [XI,YI] = polyxpoly(p(:,1),p(:,2),[0;xmax(1)],[0;xmax(2)]);
-        if isempty(XI)
-            xopt = xmax;
-            in = false;
+ss = numel(polys);
+dim = numel(objX);
+xopts = zeros(ss,dim);
+ins = zeros(ss);
+for n = 1:ss
+    p = polys{n};
+
+    if cams{1}.dim == 2
+        F = (cams{1}.e/cams{1}.fx)^(-2);
+        E = abs(ee(2)-ee(1));
+        D = ee(2)+ee(1);
+        dist = sqrt(F/E);
+        if ee(2)>ee(1)
+            xmax = [0;dist];
         else
-            % the first intersection is selected
-            xopt = [XI';YI'];
-            xopt = xopt(:,1);
-            in = true;
+            xmax = [dist;0];
         end
+
+        if inpolygon(xmax(1), xmax(2), p(:,1),p(:,2))
+            xopt = xmax;
+            in = true;
+        else
+            [XI,YI] = polyxpoly(p(:,1),p(:,2),[0;xmax(1)],[0;xmax(2)]);
+            if isempty(XI)
+                xopt = xmax;
+                in = false;
+            else
+                % the first intersection is selected
+                xopt = [XI';YI'];
+                xopt = xopt(:,1);
+                in = true;
+            end
+        end
+
+        xopt = R*xopt+T;
+
+    else
+
+        % TODO: only moved, correction needed
+        start = [500; 1500];
+        lb = [0;10];
+        xopt = fmincon(...
+            @(v) -myfun(cams,v), ... %fun
+            start, ... %x0
+            [], [], ... %A, b
+            [], [], ... %Aeq, beq
+            lb, ... %lb
+            [], ... %ub
+            [], ... %nonlcon
+            optimset('OutputFcn', @outputfun)); %options
+        plot(xopt(1), xopt(2), 'r*')
+        in = inpolygon(xopt(1), xopt(2), p(:,1),p(:,2));
+
     end
 
-    xopt = R*xopt+T;
-
-else
-
-    % TODO: only moved, correction needed
-    start = [500; 1500];
-    lb = [0;10];
-    xopt = fmincon(...
-        @(v) -myfun(cams,v), ... %fun
-        start, ... %x0
-        [], [], ... %A, b
-        [], [], ... %Aeq, beq
-        lb, ... %lb
-        [], ... %ub
-        [], ... %nonlcon
-        optimset('OutputFcn', @outputfun)); %options
-    plot(xopt(1), xopt(2), 'r*')
-    in = inpolygon(xopt(1), xopt(2), p(:,1),p(:,2));
+    xopts(n,:) = xopt';
+    ins(n) = in;
 
 end
 
