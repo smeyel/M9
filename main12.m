@@ -37,10 +37,18 @@ objX = [0;0];
             
 hold on
 DrawCamera(cams)
+% plot the first polygon and all of its vertices
+%plot(polygon{1}(:,1),polygon{1}(:,2),...
+%     polygon{1}(:,1),polygon{1}(:,2),'g*')
+
+% plot all polygon and all vertices of all polygon
+%cellfun(@(p) plot(p(:,1),p(:,2),...
+%                  p(:,1),p(:,2),'g*'), polygon);
+
 %cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
-plot(polygon{1}(:,1),polygon{1}(:,2)) % plot the first polygon
-xopts = calc_opt_plane(cams, polygon{1}, objX);
-plot(xopts(:,1), xopts(:,2), 'r*'); % plot all xopts with red
+%plot(polygon{1}(:,1),polygon{1}(:,2)) % plot the first polygon
+%xopts = calc_opt_plane(cams, polygon{1}, objX);
+%plot(xopts(:,1), xopts(:,2), 'r*'); % plot all xopts with red
 hold off
 
 
