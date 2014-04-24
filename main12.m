@@ -89,7 +89,6 @@ function xopt = calc_opt_plane(cams, polygon, objX)
 
 % Rotation and translation
 [R ee] = eig(calc_Ciw(cams, objX));
-ee = diag(ee);
 T = objX;
 
 % Transformation of the polygon to:
@@ -98,7 +97,15 @@ polygon_cell = num2cell(polygon,2);
 p_cell = cellfun(@(p) (R'*(p'-T))', polygon_cell, 'uni', false);
 p = cell2mat(p_cell);
 
+% calc xopt and transform back
+xopt = calc_opt_polygon_ori(cams, p);
+xopt = R*xopt+T;
+
+
+function xopt = calc_opt_polygon_ori(cams, polygon)
+
 if cams{1}.dim == 2
+    ee = eig(calc_Ciw(cams, zeros(cams{1}.dim,1)));
     F = (cams{1}.e/cams{1}.fx)^(-2);
     E = abs(ee(2)-ee(1));
     D = ee(2)+ee(1);
@@ -110,14 +117,14 @@ if cams{1}.dim == 2
     end
 
     % xmax in polygon
-    if inpolygon(xmax(1), xmax(2), p(:,1),p(:,2))
+    if inpolygon(xmax(1), xmax(2), polygon(:,1),polygon(:,2))
         xopt = xmax;
     % -xmax in polygon
-    elseif inpolygon(-xmax(1), -xmax(2), p(:,1),p(:,2))
+    elseif inpolygon(-xmax(1), -xmax(2), polygon(:,1),polygon(:,2))
         xopt = -xmax;
     else
         % -xmax..xmax intersection with the polygon
-        [XI,YI] = polyxpoly(p(:,1),p(:,2),[-xmax(1);xmax(1)],[-xmax(2);xmax(2)]);
+        [XI,YI] = polyxpoly(polygon(:,1),polygon(:,2),[-xmax(1);xmax(1)],[-xmax(2);xmax(2)]);
         % intersection exists
         if ~isempty(XI)
             % the first intersection is selected
@@ -125,7 +132,7 @@ if cams{1}.dim == 2
             xopt = xopt(:,1);
         % intersection does not exist
         else
-            p2 = p;
+            p2 = polygon;
             p2 = add_intersections(p2, 1);
             p2 = add_intersections(p2, 2);
             s2 = [p2(1:end-1,:) p2(2:end,:)]; % segments, each row: [x0 y0 x1 y1]
@@ -136,8 +143,6 @@ if cams{1}.dim == 2
             xopt = xopts{qi};
         end
     end
-
-    xopt = R*xopt+T;
 
 else
 
@@ -154,7 +159,7 @@ else
         [], ... %nonlcon
         optimset('OutputFcn', @outputfun)); %options
     plot(xopt(1), xopt(2), 'r*')
-    in = inpolygon(xopt(1), xopt(2), p(:,1),p(:,2));
+    in = inpolygon(xopt(1), xopt(2), polygon(:,1),polygon(:,2));
 
 end
 
