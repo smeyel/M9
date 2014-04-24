@@ -123,10 +123,17 @@ if cams{1}.dim == 2
             % the first intersection is selected
             xopt = [XI';YI'];
             xopt = xopt(:,1);
-        % intersectiondoes not exist
+        % intersection does not exist
         else
-            % TODO: calculate on the segments
-            xopt = xmax;
+            p2 = p;
+            p2 = add_intersections(p2, 1);
+            p2 = add_intersections(p2, 2);
+            s2 = [p2(1:end-1,:) p2(2:end,:)]; % segments, each row: [x0 y0 x1 y1]
+
+            s2_cell = num2cell(s2,2);
+            [xopts qs] = cellfun(@(s) calc_opt_line_ori(cams, s), s2_cell, 'uni', false);
+            [qopt qi] = min([qs{:}]);
+            xopt = xopts{qi};
         end
     end
 
@@ -150,6 +157,25 @@ else
     in = inpolygon(xopt(1), xopt(2), p(:,1),p(:,2));
 
 end
+
+
+function [xopt q] = calc_opt_line_ori(cams, segment)
+x0 = segment(1);
+y0 = segment(2);
+x1 = segment(3);
+y1 = segment(4);
+dx = x1-x0;
+dy = y1-y0;
+[topt q] = fmincon(...
+        @(t) -myfun(cams,[x0+t*dx;y0+t*dy]), ... %fun
+        0, ... %x0
+        [], [], ... %A, b
+        [], [], ... %Aeq, beq
+        0, ... %lb
+        1, ... %ub
+        [], ... %nonlcon
+        []); %options
+xopt = [x0+topt*dx;y0+topt*dy];
 
 
 function p_added = add_intersections(polygon, index)
