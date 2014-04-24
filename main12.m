@@ -166,7 +166,8 @@ end
 function p_added = add_intersections(p, index)
 % p is a cell array of polygons
 % add the intersections to every polygon
-% intersection is if the coordinate at the index changes the sign
+% valid intersection:
+%   the coordinate at the index changes the sign between -1 and +1
 
 % for every polygon in p
 for np=1:numel(p)
@@ -180,8 +181,8 @@ for np=1:numel(p)
         p_added{np} = [p_added{np} ; pa(n,:)]; % add begin vertex
         i0 = pa(n,index);
         i1 = pa(n+1,index);
-        % if sign change
-        if(sign(i0) ~= sign(i1))
+        % if valid intersection, signs are: -1 and +1
+        if(i0*i1 < 0)
             l0 = abs(i0);
             l1 = abs(i1);
             x0 = pa(n,:);
