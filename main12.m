@@ -84,7 +84,7 @@ pre = x;
 stop = 0;
 
 
-function [xopt in] = calc_opt_plane(cams, polygon, objX)
+function xopt = calc_opt_plane(cams, polygon, objX)
 % polygon: array of vertices
 
 % Rotation and translation
@@ -109,22 +109,24 @@ if cams{1}.dim == 2
         xmax = [dist;0];
     end
 
+    % xmax in polygon
     if inpolygon(xmax(1), xmax(2), p(:,1),p(:,2))
         xopt = xmax;
-        in = true;
+    % -xmax in polygon
     elseif inpolygon(-xmax(1), -xmax(2), p(:,1),p(:,2))
         xopt = -xmax;
-        in = true;
     else
+        % -xmax..xmax intersection with the polygon
         [XI,YI] = polyxpoly(p(:,1),p(:,2),[-xmax(1);xmax(1)],[-xmax(2);xmax(2)]);
-        if isempty(XI)
-            xopt = xmax;
-            in = false;
-        else
+        % intersection exists
+        if ~isempty(XI)
             % the first intersection is selected
             xopt = [XI';YI'];
             xopt = xopt(:,1);
-            in = true;
+        % intersectiondoes not exist
+        else
+            % TODO: calculate on the segments
+            xopt = xmax;
         end
     end
 
