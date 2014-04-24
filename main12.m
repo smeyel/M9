@@ -46,8 +46,8 @@ DrawCamera(cams)
 %                  p(:,1),p(:,2),'g*'), polygon);
 
 %polys = polygon;
-%polys = add_intersections(polys, 1);
-%polys = add_intersections(polys, 2);
+%polys = cellfun(@(p) add_intersections(p,1), polys, 'uni', false);
+%polys = cellfun(@(p) add_intersections(p,2), polys, 'uni', false);
 % plot all polys and all vertices of all polys
 %cellfun(@(p) plot(p(:,1),p(:,2),...
 %                  p(:,1),p(:,2),'g*'), polys);
@@ -152,33 +152,27 @@ else
 end
 
 
-function p_added = add_intersections(p, index)
-% p is a cell array of polygons
-% add the intersections to every polygon
+function p_added = add_intersections(polygon, index)
+% add the intersections to the polygon
 % valid intersection:
 %   the coordinate at the index changes the sign between -1 and +1
+% polygon: array of vertices
 
-% for every polygon in p
-for np=1:numel(p)
-    pa = p{np};
-    dim = size(pa,2);
-    spa = size(pa,1)-1;
-    % for every edge in pa
-    ac = 0; % added_count
-    p_added{np} = []; % empty
-    for n=1:spa
-        p_added{np} = [p_added{np} ; pa(n,:)]; % add begin vertex
-        i0 = pa(n,index);
-        i1 = pa(n+1,index);
-        % if valid intersection, signs are: -1 and +1
-        if(i0*i1 < 0)
-            l0 = abs(i0);
-            l1 = abs(i1);
-            x0 = pa(n,:);
-            x1 = pa(n+1,:);
-            new = x0 * l1/(l0+l1) + x1 * l0/(l0+l1);
-            p_added{np} = [p_added{np} ; new];
-        end
+spa = size(polygon,1)-1;
+p_added = []; % empty
+% for every edge in the polygon
+for n=1:spa
+    p_added = [p_added ; polygon(n,:)]; % add begin vertex
+    i0 = polygon(n,index);
+    i1 = polygon(n+1,index);
+    % if valid intersection, signs are: -1 and +1
+    if(i0*i1 < 0)
+        l0 = abs(i0);
+        l1 = abs(i1);
+        x0 = polygon(n,:);
+        x1 = polygon(n+1,:);
+        new = x0 * l1/(l0+l1) + x1 * l0/(l0+l1);
+        p_added = [p_added ; new];
     end
-    p_added{np} = [p_added{np} ; pa(spa+1,:)]; % add end vertex
 end
+p_added = [p_added ; polygon(spa+1,:)]; % add end vertex
