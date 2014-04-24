@@ -16,26 +16,26 @@ useDetectAngle = false;
 
 myAddPath
 
-cams = {CreateCamera('oripos', [0;1], [-1000; 500]), ...
-        CreateCamera('oripos', [0;1], [-1000; -500])};
+cams = {CreateCamera('pos', [-1000; 500; 0]), ...
+        CreateCamera('pos', [-1000; -500; 0])};
     
-polygon{1} = [ -500, 1500 ; ...
-                   -500, 2000 ; ...
-                    500, 1600 ; ...
-                    -400, 1500 ];
-polygon{2} = [ -400, 400 ; ...
-                   -400, 800 ; ...
-                    400, 1000 ; ...
-                    400, 400 ];
-polygon{3} = [ -600, 1500 ; ...
-                   1000, 500 ; ...
-                   -400, 600 ];
-polygon{4} = [ 1600, -2500 ; ...
-                   -2000, -1500 ; ...
-                   1400, -1800 ];
+polygon{1} = [ -500, 1500, 100 ; ...
+                   -500, 2000, 100 ; ...
+                    500, 1600, 100 ; ...
+                    0, 1000, 100 ];
+% polygon{2} = [ -400, 400 ; ...
+%                    -400, 800 ; ...
+%                     400, 1000 ; ...
+%                     400, 400 ];
+% polygon{3} = [ -600, 1500 ; ...
+%                    1000, 500 ; ...
+%                    -400, 600 ];
+% polygon{4} = [ 1600, -2500 ; ...
+%                    -2000, -1500 ; ...
+%                    1400, -1800 ];
 polygon = cellfun(@(p) [p;p(1,:)], polygon, 'uni', false);
 
-objX = [-700;-600];
+objX = [0;0;0];
 
             
 hold on
@@ -59,12 +59,15 @@ DrawCamera(cams)
 %xopt = calc_opt_polygon(cams, polygon{1}, objX);
 %plot(xopt(1), xopt(2), 'r*') % plot xopt with red
 
-cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
+%cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
+cellfun(@(p) plot3(p(:,1),p(:,2),p(:,3)), polygon); % plot all polygon
 xopts = cellfun(@(p) calc_opt_polygon(cams, p, objX), polygon, 'uni', false);
 xopts = cell2mat(xopts)';
-plot(xopts(:,1), xopts(:,2), 'r*') % plot all xopts with red
+%plot(xopts(:,1), xopts(:,2), 'r*') % plot all xopts with red
+plot3(xopts(:,1), xopts(:,2), xopts(:,3), 'r*') % plot all xopts with red
 
-plot(objX(1), objX(2), 'g*') % plot objX
+%plot(objX(1), objX(2), 'g*') % plot objX
+plot3(objX(1), objX(2), objX(3), 'g*') % plot objX
 
 hold off
 
@@ -75,7 +78,7 @@ return
 
 
 function W = myfun(cams, x)
-cams{length(cams)+1} = CreateCamera('oripos', [0;1], x);
+cams{length(cams)+1} = CreateCamera('pos', x);
 W = 10000*min(eig(calc_Ciw(cams, zeros(cams{1}.dim,1))));
 
 
@@ -159,41 +162,102 @@ if cams{1}.dim == 2
 
 else
 
-    % TODO: only moved, correction needed
-    start = [500; 1500];
-    lb = [0;10];
-    xopt = fmincon(...
-        @(v) -myfun(cams,v), ... %fun
-        start, ... %x0
-        [], [], ... %A, b
-        [], [], ... %Aeq, beq
-        lb, ... %lb
-        [], ... %ub
-        [], ... %nonlcon
-        optimset('OutputFcn', @outputfun)); %options
-    plot(xopt(1), xopt(2), 'r*')
-    in = inpolygon(xopt(1), xopt(2), polygon(:,1),polygon(:,2));
+    % select three, non-collinear points
+    p1 = polygon(1,:)';
+    p2 = polygon(2,:)';
+    for i=3:size(polygon,1)
+        p = polygon(i,:)';
+        if norm(cross(p-p1,p-p2)) ~= 0
+            p3 = p;
+            break
+        end
+    end
+    if ~exist('p3')
+        error('Points in polygon are collinear points!')
+    end
+
+    % generate base vectors
+    w1 = p2-p1;
+    w2 = p3-p1;
+    v1 = w1 / norm(w1);
+    w2n = w2 - v1'*w2*v1;
+    v2 = w2n / norm(w2n);
+    v3 = cross(v1,v2);
+
+    % find the global optimum (vopt) on the plane in the v1-v2 base
+    vopt = fminunc(...
+        @(v) -myfun(cams,p1+v(1)*v1+v(2)*v2), ... %fun
+        [0;0], ... %x0
+        []); %options
+    % calculate xopt from vopt
+    xopt = p1+vopt(1)*v1+vopt(2)*v2;
+
+    % Transformation of the polygon and the optimum (xopt) to:
+    % p1 in origin and v1,v2,v3 are parallel to the axes respectively
+    R = [v1 v2 v3];
+    T = p1;
+    polygon_cell = num2cell(polygon,2);
+    p_cell = cellfun(@(p) (R'*(p'-T))', polygon_cell, 'uni', false);
+    p_plane = cell2mat(p_cell);
+    x_plane = R'*(xopt-T);
+
+    if inpolygon(x_plane(1), x_plane(2), p_plane(:,1),p_plane(:,2))
+        return
+    else
+        p2 = polygon;
+        p2 = add_intersections(p2, 1);
+        p2 = add_intersections(p2, 2);
+        p2 = add_intersections(p2, 3);
+        s2 = [p2(1:end-1,:) p2(2:end,:)]; % segments, each row: [x0 y0 z0 x1 y1 z1]
+
+        s2_cell = num2cell(s2,2);
+        [xopts qs] = cellfun(@(s) calc_opt_line_ori(cams, s), s2_cell, 'uni', false);
+        [qopt qi] = min([qs{:}]);
+        xopt = xopts{qi};
+    end
 
 end
 
 
 function [xopt q] = calc_opt_line_ori(cams, segment)
-x0 = segment(1);
-y0 = segment(2);
-x1 = segment(3);
-y1 = segment(4);
-dx = x1-x0;
-dy = y1-y0;
-[topt q] = fmincon(...
-        @(t) -myfun(cams,[x0+t*dx;y0+t*dy]), ... %fun
-        0, ... %x0
-        [], [], ... %A, b
-        [], [], ... %Aeq, beq
-        0, ... %lb
-        1, ... %ub
-        [], ... %nonlcon
-        []); %options
-xopt = [x0+topt*dx;y0+topt*dy];
+if cams{1}.dim == 3
+    x0 = segment(1);
+    y0 = segment(2);
+    z0 = segment(3);
+    x1 = segment(4);
+    y1 = segment(5);
+    z1 = segment(6);
+    dx = x1-x0;
+    dy = y1-y0;
+    dz = z1-z0;
+    [topt q] = fmincon(...
+            @(t) -myfun(cams,[x0+t*dx;y0+t*dy;z0+t*dz]), ... %fun
+            0, ... %x0
+            [], [], ... %A, b
+            [], [], ... %Aeq, beq
+            0, ... %lb
+            1, ... %ub
+            [], ... %nonlcon
+            []); %options
+    xopt = [x0+topt*dx;y0+topt*dy;z0+topt*dz];
+else
+    x0 = segment(1);
+    y0 = segment(2);
+    x1 = segment(3);
+    y1 = segment(4);
+    dx = x1-x0;
+    dy = y1-y0;
+    [topt q] = fmincon(...
+            @(t) -myfun(cams,[x0+t*dx;y0+t*dy]), ... %fun
+            0, ... %x0
+            [], [], ... %A, b
+            [], [], ... %Aeq, beq
+            0, ... %lb
+            1, ... %ub
+            [], ... %nonlcon
+            []); %options
+    xopt = [x0+topt*dx;y0+topt*dy];
+end
 
 
 function p_added = add_intersections(polygon, index)
