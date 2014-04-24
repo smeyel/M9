@@ -107,8 +107,11 @@ polygon_cell = num2cell(polygon,2);
 p_cell = cellfun(@(p) (R'*(p'-T))', polygon_cell, 'uni', false);
 p = cell2mat(p_cell);
 
+% Transformation of the cameras
+cams_ori = cellfun(@(c) CreateCamera('pos', R'*(c.pos-T)), cams, 'uni', false);
+
 % calc xopt and transform back
-xopt = calc_opt_polygon_ori(cams, p);
+xopt = calc_opt_polygon_ori(cams_ori, p);
 xopt = R*xopt+T;
 
 
