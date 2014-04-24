@@ -54,7 +54,7 @@ DrawCamera(cams)
 
 %cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
 plot(polygon{1}(:,1),polygon{1}(:,2)) % plot the first polygon
-xopt = calc_opt_plane(cams, polygon{1}, objX);
+xopt = calc_opt_polygon(cams, polygon{1}, objX);
 plot(xopt(1), xopt(2), 'r*') % plot xopt with red
 hold off
 
@@ -84,7 +84,7 @@ pre = x;
 stop = 0;
 
 
-function xopt = calc_opt_plane(cams, polygon, objX)
+function xopt = calc_opt_polygon(cams, polygon, objX)
 % polygon: array of vertices
 
 % Rotation and translation
