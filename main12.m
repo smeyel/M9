@@ -184,6 +184,13 @@ else
     v2 = w2n / norm(w2n);
     v3 = cross(v1,v2);
 
+    % check coplanarity
+    for i=1:size(polygon,1)
+        if dot((polygon(i,:)'-p1),v3)
+            error('Points in the polygon are not coplanar!')
+        end
+    end
+
     % find the global optimum (vopt) on the plane in the v1-v2 base
     vopt = fminunc(...
         @(v) -myfun(cams,p1+v(1)*v1+v(2)*v2), ... %fun
