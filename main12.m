@@ -112,8 +112,11 @@ if cams{1}.dim == 2
     if inpolygon(xmax(1), xmax(2), p(:,1),p(:,2))
         xopt = xmax;
         in = true;
+    elseif inpolygon(-xmax(1), -xmax(2), p(:,1),p(:,2))
+        xopt = -xmax;
+        in = true;
     else
-        [XI,YI] = polyxpoly(p(:,1),p(:,2),[0;xmax(1)],[0;xmax(2)]);
+        [XI,YI] = polyxpoly(p(:,1),p(:,2),[-xmax(1);xmax(1)],[-xmax(2);xmax(2)]);
         if isempty(XI)
             xopt = xmax;
             in = false;
