@@ -5,6 +5,7 @@ function cam = CreateCamera(varargin)
 %   CreateCamera('oripos', ori, pos)
 %   CreateCamera('c2w', c2w)
 %   CreateCamera('w2c', w2c)
+%   CreateCamera('pos', pos) => ori will be [0;0;1] or [0;1]
 % Some camera parameters from: ps3eye_intrinsics_red.xml
 
 % w2c: world => camera
@@ -31,7 +32,18 @@ end
 
 ii = 1;
 while ii <= length(varargin)
-    if strcmp(varargin{ii}, 'oripos')
+    if strcmp(varargin{ii}, 'pos')
+        pos = varargin{ii+1};
+        ii = ii + 2;
+        dim = length(pos);
+        validate_dim(dim);
+        if dim == 3
+            cam = CreateCamera('oripos', [0;0;1], pos);
+        else
+            cam = CreateCamera('oripos', [0;1], pos);
+        end
+        return
+    elseif strcmp(varargin{ii}, 'oripos')
         ori = varargin{ii+1};
         pos = varargin{ii+2};
         ii = ii + 3;
