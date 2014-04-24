@@ -52,10 +52,17 @@ DrawCamera(cams)
 %cellfun(@(p) plot(p(:,1),p(:,2),...
 %                  p(:,1),p(:,2),'g*'), polys);
 
-%cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
-plot(polygon{1}(:,1),polygon{1}(:,2)) % plot the first polygon
-xopt = calc_opt_polygon(cams, polygon{1}, objX);
-plot(xopt(1), xopt(2), 'r*') % plot xopt with red
+%plot(polygon{1}(:,1),polygon{1}(:,2)) % plot the first polygon
+%xopt = calc_opt_polygon(cams, polygon{1}, objX);
+%plot(xopt(1), xopt(2), 'r*') % plot xopt with red
+
+cellfun(@(p) plot(p(:,1),p(:,2)), polygon); % plot all polygon
+xopts = cellfun(@(p) calc_opt_polygon(cams, p, objX), polygon, 'uni', false);
+xopts = cell2mat(xopts)';
+plot(xopts(:,1), xopts(:,2), 'r*') % plot all xopts with red
+
+plot(objX(1), objX(2), 'g*') % plot objX
+
 hold off
 
 
