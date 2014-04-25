@@ -27,44 +27,16 @@ xopt = R*xopt+T;
 function xopt = calc_opt_polygon_ori(cams, polygon)
 
 if cams{1}.dim == 2
-    ee = eig(calc_Ciw(cams, zeros(cams{1}.dim,1)));
-    F = (cams{1}.e/cams{1}.fx)^(-2);
-    E = abs(ee(2)-ee(1));
-    D = ee(2)+ee(1);
-    dist = sqrt(F/E);
-    if ee(2)>ee(1)
-        xmax = [0;dist];
-    else
-        xmax = [dist;0];
-    end
 
-    % xmax in polygon
-    if inpolygon(xmax(1), xmax(2), polygon(:,1),polygon(:,2))
-        xopt = xmax;
-    % -xmax in polygon
-    elseif inpolygon(-xmax(1), -xmax(2), polygon(:,1),polygon(:,2))
-        xopt = -xmax;
-    else
-        % -xmax..xmax intersection with the polygon
-        [XI,YI] = polyxpoly(polygon(:,1),polygon(:,2),[-xmax(1);xmax(1)],[-xmax(2);xmax(2)]);
-        % intersection exists
-        if ~isempty(XI)
-            % the first intersection is selected
-            xopt = [XI';YI'];
-            xopt = xopt(:,1);
-        % intersection does not exist
-        else
-            p2 = polygon;
-            p2 = add_intersections(p2, 1);
-            p2 = add_intersections(p2, 2);
-            s2 = [p2(1:end-1,:) p2(2:end,:)]; % segments, each row: [x0 y0 x1 y1]
+    p2 = polygon;
+    p2 = add_intersections(p2, 1);
+    p2 = add_intersections(p2, 2);
+    s2 = [p2(1:end-1,:) p2(2:end,:)]; % segments, each row: [x0 y0 x1 y1]
 
-            s2_cell = num2cell(s2,2);
-            [xopts qs] = cellfun(@(s) calc_opt_line_ori(cams, s), s2_cell, 'uni', false);
-            [qopt qi] = min([qs{:}]);
-            xopt = xopts{qi};
-        end
-    end
+    s2_cell = num2cell(s2,2);
+    [xopts qs] = cellfun(@(s) calc_opt_line_ori(cams, s), s2_cell, 'uni', false);
+    [qopt qi] = min([qs{:}]);
+    xopt = xopts{qi};
 
 else
 
