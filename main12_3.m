@@ -14,10 +14,15 @@ useDetectAngle = false;
 myAddPath
 
 
+[px py] = pol2cart((-2:2:2)'*pi/3, 500);
+[nx ny] = pol2cart((-2:2:2)'*pi/3+pi/2, 1);
+d = [ -100 200 ; ...
+      -300 600 ;...
+      -400 400 ];
 global segment
-segment{1} = [-500/cos(pi/3)+200, 0+200*tan(pi/6), 0, 500/cos(pi/6)];
-segment{2} = [-500/cos(pi/3), 0, 500*cos(-2*pi/3),  500*sin(-2*pi/3)];
-segment{3} = [500, 0, 700, 500];
+segment{1} = [px(1)+d(1,1)*nx(1), py(1)+d(1,1)*ny(1), px(1)+d(1,2)*nx(1), py(1)+d(1,2)*ny(1)];
+segment{2} = [px(2)+d(2,1)*nx(2), py(2)+d(2,1)*ny(2), px(2)+d(2,2)*nx(2), py(2)+d(2,2)*ny(2)];
+segment{3} = [px(3)+d(3,1)*nx(3), py(3)+d(3,1)*ny(3), px(3)+d(3,2)*nx(3), py(3)+d(3,2)*ny(3)];
 
 
 figure
@@ -25,7 +30,11 @@ hold on
 cellfun(@(s) plot([s(1);s(3)],[s(2);s(4)]), segment); % plot all segment
 xopt = calc_opt_line_ori(segment);
 plot(xopt(:,1), xopt(:,2), 'b*');
+axis('equal')
 hold off
+
+xopt
+myfun(xopt)
 
 
 function [xopt q] = calc_opt_line_ori(segments)
@@ -44,7 +53,7 @@ dy = y1-y0;
         [0;0;0], ... %lb
         [1;1;1], ... %ub
         [], ... %nonlcon
-        optimset('OutputFcn', @outputfun)); %options
+        optimset('OutputFcn', @outputfun, 'MaxFunEvals', 300)); %options
 xopt = [x0+topt.*dx,y0+topt.*dy];
 
 
