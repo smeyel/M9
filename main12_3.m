@@ -13,16 +13,19 @@ useDetectAngle = false;
 
 myAddPath
 
-
-[px py] = pol2cart((-2:2:2)'*pi/3, 500);
-[nx ny] = pol2cart((-2:2:2)'*pi/3+pi/2, 1);
+num = 4; % 3 or 4
+[px py] = pol2cart((floor(-num/2+1):floor(num/2))'*(2*pi/num), 500);
+[nx ny] = pol2cart((floor(-num/2+1):floor(num/2))'*(2*pi/num)+pi/2, 1);
 d = [ -100 200 ; ...
       -300 600 ;...
-      -400 400 ];
+      -400 400 ;...
+      -600 600 ];
+cc = {'g*', 'r*', 'm*', 'c*'};
 global segment
-segment{1} = [px(1)+d(1,1)*nx(1), py(1)+d(1,1)*ny(1), px(1)+d(1,2)*nx(1), py(1)+d(1,2)*ny(1)];
-segment{2} = [px(2)+d(2,1)*nx(2), py(2)+d(2,1)*ny(2), px(2)+d(2,2)*nx(2), py(2)+d(2,2)*ny(2)];
-segment{3} = [px(3)+d(3,1)*nx(3), py(3)+d(3,1)*ny(3), px(3)+d(3,2)*nx(3), py(3)+d(3,2)*ny(3)];
+segment = cell(1,num);
+for n=1:num
+    segment{n} = [px(n)+d(n,1)*nx(n), py(n)+d(n,1)*ny(n), px(n)+d(n,2)*nx(n), py(n)+d(n,2)*ny(n)];
+end
 
 
 global xopts
@@ -35,9 +38,9 @@ calc_opt_line_ori(segment);
 figure(1)
 hold on
 cellfun(@(s) plot([s(1);s(3)],[s(2);s(4)]), segment); % plot all segment
-cellfun(@(x) plot(x(1,1), x(1,2), 'g*'), xopts) % plot cam 1 iteration positions
-cellfun(@(x) plot(x(2,1), x(2,2), 'r*'), xopts) % plot cam 2 iteration positions
-cellfun(@(x) plot(x(3,1), x(3,2), 'm*'), xopts) % plot cam 3 iteration positions
+for n=1:num
+    cellfun(@(x) plot(x(n,1), x(n,2), cc{n}), xopts) % plot cam 'n' iteration positions with color cc{n}
+end
 plot(xopts{end}(:,1), xopts{end}(:,2), 'b*'); %plot the optimal positions of all cameras
 axis('equal')
 hold off
@@ -54,13 +57,15 @@ y1 = cellfun(@(s) s(4), segments)';
 dx = x1-x0;
 dy = y1-y0;
 
+count = numel(segments);
+
 [topt q] = fmincon(...
         @(t) -myfun([x0+t.*dx,y0+t.*dy]), ... %fun
-        [0;0;0], ... %x0
+        zeros(count,1), ... %x0
         [], [], ... %A, b
         [], [], ... %Aeq, beq
-        [0;0;0], ... %lb
-        [1;1;1], ... %ub
+        zeros(count,1), ... %lb
+        ones(count,1), ... %ub
         [], ... %nonlcon
         optimset('OutputFcn', @outputfun, 'MaxFunEvals', 300)); %options
 xopt = [x0+topt.*dx,y0+topt.*dy];
