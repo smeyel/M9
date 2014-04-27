@@ -27,6 +27,11 @@ for n=1:num
     segment{n} = [px(n)+d(n,1)*nx(n), py(n)+d(n,1)*ny(n), px(n)+d(n,2)*nx(n), py(n)+d(n,2)*ny(n)];
 end
 
+segment{1} = [-500 -400 400 -600];
+segment{2} = [600 -300 -200 400];
+segment{3} = [-700 0 200 600];
+segment{4} = [-400 -400 -400 400];
+
 
 global xopts
 global qs
