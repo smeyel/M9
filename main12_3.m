@@ -35,8 +35,10 @@ segment{4} = [-400 -400 -400 400];
 
 global xopts
 global qs
+global funccount
 xopts = {};
 qs = [];
+funccount = [];
 
 calc_opt_line_ori(segment);
 
@@ -51,7 +53,16 @@ axis('equal')
 hold off
 
 figure(2)
+hold on
+plot(qs)
 plot(qs, 'k*')
+hold off
+
+figure(3)
+hold on
+plot(funccount)
+plot(funccount, 'k*')
+hold off
 
 
 function [xopt q] = calc_opt_line_ori(segments)
@@ -79,7 +90,7 @@ xopt = [x0+topt.*dx,y0+topt.*dy];
 function W = myfun(Xs)
 x_cell = num2cell(Xs,2);
 cams = cellfun(@(x) CreateCamera('pos', x'), x_cell, 'uni', false);
-W = 10000*min(eig(calc_Ciw(cams, zeros(cams{1}.dim,1))));
+W = min(eig(calc_Ciw(cams, zeros(cams{1}.dim,1))));
 
 
 function stop = outputfun(t, optimValues, state)
@@ -89,6 +100,7 @@ function stop = outputfun(t, optimValues, state)
 global segment
 global xopts
 global qs
+global funccount
 
 if strcmp(state, 'iter')
     x0 = cellfun(@(s) s(1), segment)';
@@ -101,7 +113,8 @@ if strcmp(state, 'iter')
     index = optimValues.iteration+1;
     x = [x0+t.*dx,y0+t.*dy];
     xopts{index} = x;
-    qs(index) = myfun(x);
+    qs(index) = 1/myfun(x);
+    funccount(index) = optimValues.funccount;
 end
 stop = 0;
 
