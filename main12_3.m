@@ -27,10 +27,19 @@ for n=1:num
     segment{n} = [px(n)+d(n,1)*nx(n), py(n)+d(n,1)*ny(n), px(n)+d(n,2)*nx(n), py(n)+d(n,2)*ny(n)];
 end
 
-segment{1} = [-500 -400 400 -600];
-segment{2} = [600 -300 -200 400];
-segment{3} = [-700 0 200 600];
-segment{4} = [-400 -400 -400 400];
+num = 2;
+segment = cell(1,num);
+%segment{3} = [-700 0 200 600];
+%segment{4} = [-400 -400 -400 400];
+%segment{1} = [-500 -270 400 -270];
+%segment{2} = [600 -300 -200 500];
+k = -150*sqrt(2);
+k = -300;
+segment{1} = [0 k -k k];
+segment{2} = [150 150 300 0];
+
+o1 = [0 k ; 300 0];
+o2 = [k -k ; 150 150];
 
 
 global xopts
@@ -40,7 +49,7 @@ xopts = {};
 qs = [];
 funccount = [];
 
-calc_opt_line_ori(segment);
+[xopt q] = calc_opt_line_ori(segment)
 
 figure(1)
 hold on
@@ -49,8 +58,18 @@ for n=1:num
     cellfun(@(x) plot(x(n,1), x(n,2), cc{n}), xopts) % plot cam 'n' iteration positions with color cc{n}
 end
 plot(xopts{end}(:,1), xopts{end}(:,2), 'b*'); %plot the optimal positions of all cameras
+plot(0, 0, 'k*')
 axis('equal')
 hold off
+
+myfun(o1)
+myfun(o2)
+x1 = xopt(1,:)';
+x2 = xopt(2,:)';
+x1'*x2
+norm(x1)
+norm(x2)
+return
 
 figure(2)
 hold on
@@ -84,13 +103,17 @@ count = numel(segments);
         ones(count,1), ... %ub
         [], ... %nonlcon
         optimset('OutputFcn', @outputfun, 'MaxFunEvals', 300)); %options
+topt
 xopt = [x0+topt.*dx,y0+topt.*dy];
 
 
 function W = myfun(Xs)
 x_cell = num2cell(Xs,2);
 cams = cellfun(@(x) CreateCamera('pos', x'), x_cell, 'uni', false);
-W = min(eig(calc_Ciw(cams, zeros(cams{1}.dim,1))));
+Ci = calc_Ciw(cams, zeros(cams{1}.dim,1));
+W = min(eig(Ci));
+% W = -trace(pinv(Ci));
+% W = det(Ci);
 
 
 function stop = outputfun(t, optimValues, state)
