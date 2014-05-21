@@ -83,6 +83,23 @@ hold off
 
 dot(p1,p2)
 norm(p1)-norm(p2)
+b
+pi/2-b
+
+
+syms g1 g2 real
+
+d12 = m^2 * t1^2*(1+tan(g1)^2) / (t1+tan(g1))^2;
+d22 = m^2 * t2^2*(1+tan(g2)^2) / (t2+tan(g2))^2;
+
+f = 1/d12 + 1/d22 - sqrt(1/d12^2 + 1/d22^2 + 2/(d12*d22) * cos(2*(g1+g2)));
+
+figure
+hold on
+ezcontour(f, [0 pi/2 0 pi/2])
+plot(b, pi/2-b, 'k*')
+hold off
+
 
 return
 

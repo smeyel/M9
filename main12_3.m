@@ -42,6 +42,16 @@ o1 = [0 k ; 300 0];
 o2 = [k -k ; 150 150];
 
 
+m = 1;
+num = 2;
+segment = cell(1,num);
+a1 = 60*pi/180;
+a2 = 80*pi/180;
+segment{1} = [m 0 0 m*tan(a1)];
+segment{2} = [m 0 0 -m*tan(a2)];
+
+
+
 global xopts
 global qs
 global funccount
@@ -62,8 +72,8 @@ plot(0, 0, 'k*')
 axis('equal')
 hold off
 
-myfun(o1)
-myfun(o2)
+%myfun(o1)
+%myfun(o2)
 x1 = xopt(1,:)';
 x2 = xopt(2,:)';
 x1'*x2
