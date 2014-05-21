@@ -2,10 +2,91 @@ function [] = main12_7()
 
 % two cameras are placed on two parametric lines
 % parametric calculation
+% calculate beta from angles with tangents
 
-%close all
+close all
 clear
 clc
+
+
+
+
+a1 = 60*pi/180;
+a2 = 80*pi/180;
+
+m = 10;
+
+
+syms as bs real
+metszet = m * [tan(as)/(tan(as)+tan(bs)) ; tan(as)*tan(bs)/(tan(as)+tan(bs))];
+
+talp1 = subs(metszet, {as,bs}, {a1,pi/2-a1});
+talp2 = subs(metszet, {as,bs}, {a2,pi/2-a2}) .* [1;-1];
+metszet1 = subs(metszet, {as,bs}, {a1,a2});
+metszet2 = subs(metszet, {as,bs}, {a2,a1}) .* [1;-1];
+
+talp1_ = sqrt(sum(talp1.^2));
+talp2_ = sqrt(sum(talp2.^2));
+metszet1_ = sqrt(sum(metszet1.^2));
+metszet2_ = sqrt(sum(metszet2.^2));
+
+
+
+% 90 deg and equal distance
+% it can't be done if:
+% - metszet1_ <= talp2_
+% - metszet2_ <= talp1_
+
+if metszet1_ <= talp2_
+    b = a2;
+elseif metszet2_ <= talp1_
+    b = pi/2 - a1;
+else
+    t1 = tan(a1);
+    t2 = tan(a2);
+    if a1 == pi/4
+        tgb = t1 * (1-t2)/(t1-t2);
+    elseif a2 == pi/4
+        tgb = (t2-t1) / (t2 * (t1-1));
+    else
+        tgb = t1/t2 * (t2-1)/(t1-1);
+    end
+    b = atan(tgb);
+end
+
+
+p1 =  subs(metszet, {as,bs}, {a1,b});
+p2 =  subs(metszet, {as,bs}, {a2,pi/2-b}) .* [1;-1];
+
+
+
+figure
+plot([0 m],[0 0])
+hold on
+plot([0 m],[m*tan(a1) 0])
+plot([0 m],[-m*tan(a2) 0])
+plot([0 p1(1)],[0 p1(2)])
+plot([0 p2(1)],[0 p2(2)])
+
+plot([p1(1) p2(1)],[p1(2) p2(2)], 'r')
+plot(p1(1),p1(2), 'r*')
+plot(p2(1),p2(2), 'r*')
+plot([0 talp1(1)], [0 talp1(2)], 'k')
+plot([0 talp2(1)], [0 talp2(2)], 'k')
+plot([0 metszet1(1)], [0 metszet1(2)], 'g')
+plot([0 metszet2(1)], [0 metszet2(2)], 'g')
+
+
+axis equal
+axis([0 m p2(2) p1(2)])
+hold off
+
+dot(p1,p2)
+norm(p1)-norm(p2)
+
+return
+
+
 
 
 syms a1 a2 m positive
