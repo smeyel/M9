@@ -85,12 +85,16 @@ dot(p1,p2)
 norm(p1)-norm(p2)
 b
 pi/2-b
+b*180/pi
 
 
 syms g1 g2 real
 
-d12 = m^2 * t1^2*(1+tan(g1)^2) / (t1+tan(g1))^2;
-d22 = m^2 * t2^2*(1+tan(g2)^2) / (t2+tan(g2))^2;
+d1 = m*sin(a1)/sin(a1+g1);
+d2 = m*sin(a2)/sin(a2+g2);
+
+d12 = d1^2;
+d22 = d2^2;
 
 f = 1/d12 + 1/d22 - sqrt(1/d12^2 + 1/d22^2 + 2/(d12*d22) * cos(2*(g1+g2)));
 
