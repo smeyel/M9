@@ -130,7 +130,11 @@ df2 =  char(subs(diff(f,g2), {g1,g2}, {x,y}));
 clear x y
 
 y = linspace(0,pi/2,200);
-x = arrayfun(@(y) calc_intersection(df1, y, 0, pi/2, 0.001), y);
+xmin = 0;
+xmax = pi/2;
+eps = 0.001;
+
+x = arrayfun(@(y) calc_intersection(df1, y, xmin, xmax, eps), y);
 figure
 hold on
 plot(x,y)
@@ -140,7 +144,7 @@ axis equal
 hold off
 
 y = linspace(0,pi/2,200);
-x = arrayfun(@(y) calc_intersection(df2, y, 0, pi/2, 0.001), y);
+x = arrayfun(@(y) calc_intersection(df2, y, xmin, xmax, eps), y);
 figure
 hold on
 plot(x,y)
