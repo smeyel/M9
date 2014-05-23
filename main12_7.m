@@ -119,6 +119,33 @@ plot(b, pi/2-b, 'k*')
 title('df / dg2')
 hold off
 
+
+
+syms x y real
+df1 =  char(subs(diff(f,g1), {g1,g2}, {x,y}));
+df2 =  char(subs(diff(f,g2), {g1,g2}, {x,y}));
+clear x y
+
+y = linspace(0,pi/2,200);
+x = arrayfun(@(y) calc_intersection(df1, y, 0, pi/2, 0.001), y);
+figure
+hold on
+plot(x,y)
+plot(b, pi/2-b, 'k*')
+title('df / dg1 = 0')
+hold off
+
+y = linspace(0,pi/2,200);
+x = arrayfun(@(y) calc_intersection(df2, y, 0, pi/2, 0.001), y);
+figure
+hold on
+plot(x,y)
+plot(b, pi/2-b, 'k*')
+title('df / dg2 = 0')
+hold off
+
+
+
 return
 
 
@@ -202,4 +229,23 @@ matr = diag([0 tav]);
 Ci = r2'*matr*r2;
 
 
+function intersection = calc_intersection(func_str, y, xmin, xmax, eps)
+
+low = xmin;
+high = xmax;
+
+while (high-low) > eps
+    mid = (low+high)/2;
+    x = mid;
+    y = y;
+    val = eval(func_str);
+    if val > 0
+        low = mid;
+    elseif val < 0
+        high = mid;
+    else
+        break;
+    end
+end
+intersection = mid;
 
