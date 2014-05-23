@@ -139,6 +139,10 @@ figure
 hold on
 plot(x,y)
 plot(b, pi/2-b, 'k*')
+plot([pi/2-a1 pi/2-a1], [0 pi/2], 'k')
+plot([a2 a2], [0 pi/2], 'g')
+plot([0 pi/2], [pi/2-a2 pi/2-a2], 'k')
+plot([0 pi/2], [a1 a1], 'g')
 title('df / dg1 = 0')
 axis equal
 hold off
@@ -149,6 +153,10 @@ figure
 hold on
 plot(x,y)
 plot(b, pi/2-b, 'k*')
+plot([pi/2-a1 pi/2-a1], [0 pi/2], 'k')
+plot([a2 a2], [0 pi/2], 'g')
+plot([0 pi/2], [pi/2-a2 pi/2-a2], 'k')
+plot([0 pi/2], [a1 a1], 'g')
 title('df / dg2 = 0')
 axis equal
 hold off
