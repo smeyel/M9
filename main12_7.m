@@ -102,8 +102,22 @@ figure
 hold on
 ezcontour(f, [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
+title('f')
 hold off
 
+figure
+hold on
+ezsurf(diff(f,g1), [0 pi/2 0 pi/2])
+plot(b, pi/2-b, 'k*')
+title('df / dg1')
+hold off
+
+figure
+hold on
+ezsurf(diff(f,g2), [0 pi/2 0 pi/2])
+plot(b, pi/2-b, 'k*')
+title('df / dg2')
+hold off
 
 return
 
