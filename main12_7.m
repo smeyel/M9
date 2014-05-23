@@ -103,6 +103,7 @@ hold on
 ezcontour(f, [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('f')
+axis equal
 hold off
 
 figure
@@ -110,6 +111,7 @@ hold on
 ezsurf(diff(f,g1), [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('df / dg1')
+axis equal
 hold off
 
 figure
@@ -117,6 +119,7 @@ hold on
 ezsurf(diff(f,g2), [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('df / dg2')
+axis equal
 hold off
 
 
@@ -133,6 +136,7 @@ hold on
 plot(x,y)
 plot(b, pi/2-b, 'k*')
 title('df / dg1 = 0')
+axis equal
 hold off
 
 y = linspace(0,pi/2,200);
@@ -142,6 +146,7 @@ hold on
 plot(x,y)
 plot(b, pi/2-b, 'k*')
 title('df / dg2 = 0')
+axis equal
 hold off
 
 
