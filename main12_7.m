@@ -134,13 +134,18 @@ y = 0:eps:pi/2;
 xmin = 0;
 xmax = pi/2;
 
-x1 = arrayfun(@(y) calc_intersection(df1, y, xmin, xmax, eps), y);
-x2 = arrayfun(@(y) calc_intersection(df2, y, xmin, xmax, eps), y);
+[x1 found1] = arrayfun(@(y) calc_intersection(df1, y, xmin, xmax, eps), y);
+[x2 found2] = arrayfun(@(y) calc_intersection(df2, y, xmin, xmax, eps), y);
+
+x1 = x1(found1);
+y1 = y(found1);
+x2 = x2(found2);
+y2 = y(found2);
 
 figure
 hold on
-plot(x1, y)
-plot(x2, y, 'r')
+plot(x1, y1)
+plot(x2, y2, 'r')
 plot(b, pi/2-b, 'k*')
 plot([pi/2-a1 pi/2-a1], [0 pi/2], 'k')
 plot([a2 a2], [0 pi/2], 'g')
@@ -235,7 +240,7 @@ matr = diag([0 tav]);
 Ci = r2'*matr*r2;
 
 
-function intersection = calc_intersection(func_str, y, xmin, xmax, eps)
+function [intersection found] = calc_intersection(func_str, y, xmin, xmax, eps)
 
 low = xmin;
 high = xmax;
@@ -253,5 +258,12 @@ while (high-low) > eps
         break;
     end
 end
+
+x = low;
+val_low = eval(func_str);
+x = high;
+val_high = eval(func_str);
+
+found = val_low>=0 && 0>=val_high;
 intersection = mid;
 
