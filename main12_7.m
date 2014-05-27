@@ -103,6 +103,16 @@ f = 1/d12 + 1/d22 - sqrt(1/d12^2 + 1/d22^2 + 2/(d12*d22) * cos(2*(g1+g2)));
 
 figure
 hold on
+ezsurf(dot([diff(f,g1);diff(f,g2)],[b-g1;pi/2-b-g2]), [0 1*pi/2 0 1*pi/2])
+plot(b, pi/2-b, 'k*')
+title('iranymenti f')
+%axis equal
+hold off
+
+%return
+
+figure
+hold on
 ezplot(subs(diff(f,g1), g2, pi/2-g1))
 h = ezplot(subs(diff(f,g2), g2, pi/2-g1));
 set(h,'Color','r')
