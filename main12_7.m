@@ -11,8 +11,8 @@ clc
 
 
 
-a1 = 60*pi/180;
-a2 = 80*pi/180;
+a1 = 80*pi/180;
+a2 = 60*pi/180;
 
 m = 10;
 
@@ -123,7 +123,7 @@ hold off
 
 figure
 hold on
-ezcontour(f, [0 pi/2 0 pi/2])
+ezsurf(f, [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('f')
 %axis equal
