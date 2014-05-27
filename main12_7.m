@@ -17,6 +17,19 @@ a2 = 60*pi/180;
 m = 10;
 
 
+
+syms g1 g2 real
+
+d1 = m*sin(a1)/sin(a1+g1);
+d2 = m*sin(a2)/sin(a2+g2);
+
+d12 = d1^2;
+d22 = d2^2;
+
+f = 1/d12 + 1/d22 - sqrt(1/d12^2 + 1/d22^2 + 2/(d12*d22) * cos(2*(g1+g2)));
+
+
+
 syms as bs real
 metszet = m * [tan(as)/(tan(as)+tan(bs)) ; tan(as)*tan(bs)/(tan(as)+tan(bs))];
 
@@ -88,17 +101,6 @@ pi/2-b
 b*180/pi
 
 %return
-
-
-syms g1 g2 real
-
-d1 = m*sin(a1)/sin(a1+g1);
-d2 = m*sin(a2)/sin(a2+g2);
-
-d12 = d1^2;
-d22 = d2^2;
-
-f = 1/d12 + 1/d22 - sqrt(1/d12^2 + 1/d22^2 + 2/(d12*d22) * cos(2*(g1+g2)));
 
 
 figure
