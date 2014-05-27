@@ -100,6 +100,17 @@ d22 = d2^2;
 
 f = 1/d12 + 1/d22 - sqrt(1/d12^2 + 1/d22^2 + 2/(d12*d22) * cos(2*(g1+g2)));
 
+
+figure
+hold on
+ezplot(subs(diff(f,g1), g2, pi/2-g1))
+h = ezplot(subs(diff(f,g2), g2, pi/2-g1));
+set(h,'Color','r')
+%xlim([min(pi/2-a1, a2) max(pi/2-a1, a2)])
+hold off
+
+%return
+
 figure
 hold on
 ezcontour(f, [0 pi/2 0 pi/2])
