@@ -87,6 +87,8 @@ b
 pi/2-b
 b*180/pi
 
+%return
+
 
 syms g1 g2 real
 
@@ -103,26 +105,30 @@ hold on
 ezcontour(f, [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('f')
-axis equal
+%axis equal
 hold off
+
+%return
 
 figure
 hold on
 ezsurf(diff(f,g1), [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('df / dg1')
-axis equal
+%axis equal
 hold off
+
+%return
 
 figure
 hold on
 ezsurf(diff(f,g2), [0 pi/2 0 pi/2])
 plot(b, pi/2-b, 'k*')
 title('df / dg2')
-axis equal
+%axis equal
 hold off
 
-
+%return
 
 syms x y real
 df1 =  char(subs(diff(f,g1), {g1,g2}, {x,y}));
