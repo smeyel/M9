@@ -158,7 +158,7 @@ df1 =  char(subs(diff(f,g1), {g1,g2}, {x,y}));
 df2 =  char(subs(diff(f,g2), {g1,g2}, {x,y}));
 clear x y
 
-eps = 0.001;
+eps = 0.01;
 y = 0:eps:pi/2;
 xmin = 0;
 xmax = pi/2;
