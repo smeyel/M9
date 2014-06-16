@@ -54,6 +54,15 @@ f = det(Ci);
 b1 = (pi + a2 - 2*a1) / 3;
 b2 = (pi + a1 - 2*a2) / 3;
 
+b1_e = atan((1-1/tan(a2)) / (1-1/tan(a1)));
+b2_e = atan((1-1/tan(a1)) / (1-1/tan(a2)));
+
+
+[x y] = pol2cart(b1_e, subs(d1,g1,b1_e));
+p1_e = [x;y];
+
+[x y] = pol2cart(-b2_e, subs(d2,g2,b2_e));
+p2_e = [x;y];
 
 [x y] = pol2cart(b1, subs(d1,g1,b1));
 p1 = [x;y];
@@ -85,6 +94,8 @@ plot([0 p2(1)],[0 p2(2)])
 plot([p1(1) p2(1)],[p1(2) p2(2)], 'r')
 plot(p1(1),p1(2), 'r*')
 plot(p2(1),p2(2), 'r*')
+plot(p1_e(1),p1_e(2), 'c*')
+plot(p2_e(1),p2_e(2), 'c*')
 plot([0 talp1(1)], [0 talp1(2)], 'k')
 plot([0 talp2(1)], [0 talp2(2)], 'k')
 plot([0 metszet1(1)], [0 metszet1(2)], 'g')
