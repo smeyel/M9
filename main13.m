@@ -51,8 +51,9 @@ Ci = Ci1+Ci2;
 
 f = det(Ci);
 
-b1 = (pi + a2 - 2*a1) / 3;
-b2 = (pi + a1 - 2*a2) / 3;
+b = (1/3 * [2 -1 ; -1 2] * [pi-a1 ; pi-a2]);
+b1 = b(1);
+b2 = b(2);
 
 b1_e = atan((1-1/tan(a2)) / (1-1/tan(a1)));
 b2_e = atan((1-1/tan(a1)) / (1-1/tan(a2)));
