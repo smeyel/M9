@@ -55,6 +55,48 @@ b1 = (pi + a2 - 2*a1) / 3;
 b2 = (pi + a1 - 2*a2) / 3;
 
 
+[x y] = pol2cart(b1, subs(d1,g1,b1));
+p1 = [x;y];
+
+[x y] = pol2cart(-b2, subs(d2,g2,b2));
+p2 = [x;y];
+
+[x y] = pol2cart(pi/2-a1, subs(d1,g1,pi/2-a1));
+talp1 = [x;y];
+
+[x y] = pol2cart(-(pi/2-a2), subs(d2,g2,pi/2-a2));
+talp2 = [x;y];
+
+[x y] = pol2cart(a2, subs(d1,g1,a2));
+metszet1 = [x;y];
+
+[x y] = pol2cart(-a1, subs(d2,g2,a1));
+metszet2 = [x;y];
+
+
+figure
+plot([0 m],[0 0])
+hold on
+plot([0 m],[m*tan(a1) 0])
+plot([0 m],[-m*tan(a2) 0])
+plot([0 p1(1)],[0 p1(2)])
+plot([0 p2(1)],[0 p2(2)])
+
+plot([p1(1) p2(1)],[p1(2) p2(2)], 'r')
+plot(p1(1),p1(2), 'r*')
+plot(p2(1),p2(2), 'r*')
+plot([0 talp1(1)], [0 talp1(2)], 'k')
+plot([0 talp2(1)], [0 talp2(2)], 'k')
+plot([0 metszet1(1)], [0 metszet1(2)], 'g')
+plot([0 metszet2(1)], [0 metszet2(2)], 'g')
+
+axis equal
+hold off
+
+
+return
+
+
 figure
 hold on
 ezsurf(f, [0 pi/2 0 pi/2])
