@@ -12,20 +12,6 @@ for i = 1:length(cam)
   out(i).Ci = zeros(2,2);
   out(i).mu = X;
 
-  %field of view contains the point
-  if useFoV
-    contains = true;
-    for [val, key] = cam(i).normal_vectors
-      if (X-cam(i).pos)' * val <= 0
-        contains = false;
-        break;
-      end
-    end
-    if ~contains
-      continue;
-    end
-  end
-
 
   %camera and point distance
   t = norm(X-cam(i).pos);

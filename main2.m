@@ -37,13 +37,13 @@ end
 %%3D
 figure(1); clf;
 contour(gX,gY,gW,[900:10:1100]);
-axis("equal");
-xlabel("x");
-ylabel("y", 'rotation', 0)
+axis('equal');
+xlabel('x');
+ylabel('y', 'rotation', 0)
 
 
 
 %save
 colormap([zeros(63,3) ; ones(1,3)]);
-saveas(figure(1), "figures/contour_add_one_camera.eps")
+saveas(figure(1), 'figures/contour_add_one_camera.eps')
 

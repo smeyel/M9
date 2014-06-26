@@ -1,4 +1,4 @@
-function DrawCamera(cam, color="b")
+function DrawCamera(cam, color)
 
 %cam: nx1 struct array of camera structs
 
@@ -22,13 +22,13 @@ for i = 1:length(cam)
     %direction low
     dl = Rot2D(pi/2) * cam(i).normal_vectors.low;
     if(dl' * nf < 0)
-      dl *= -1;
+      dl = dl * -1;
     end
 
     %direction high
     dh = Rot2D(pi/2) * cam(i).normal_vectors.high;
     if(dh' * nf < 0)
-      dh *= -1;
+      dh = dh * -1;
     end
 
     drawRay([c;dl]', color);

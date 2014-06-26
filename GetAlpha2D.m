@@ -13,11 +13,11 @@ if dx==0
 else
   alpha = atan(dy/dx);
   if dx<0
-    alpha += pi;
+    alpha = alpha + pi;
   end
 end
 
 if alpha<0
-  alpha += 2*pi;
+  alpha = alpha + 2*pi;
 end
 

@@ -1,4 +1,4 @@
-function cam = CreateCamera(ori=0, pos=zeros(2,1))
+function cam = CreateCamera(ori, pos)
 
 %R: Rotation matrix, world <= camera, 2x2 matrix
 %T: Translation matrix, world <= camera, 2x1 vector

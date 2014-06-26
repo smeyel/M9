@@ -4,11 +4,12 @@
 clear
 clc
 
-warning('off', 'Octave:possible-matlab-short-circuit-operator');
+%warning('off', 'Octave:possible-matlab-short-circuit-operator');
 
 myAddPath
 
-global useFoV=false;
+global useFoV
+useFov=false;
 
 X=95;
 Y=0;
@@ -26,11 +27,11 @@ cam(2) = CreateCamera(GetAlpha2D(X-x2, Y-y2), [x2;y2]);
 %%2D
 figure(1); clf;
 hold on
-axis([0 150 -60 70], "equal");
-xlabel("x")
-ylabel("y", 'rotation', 0)
+axis([0 150 -60 70], 'equal');
+xlabel('x')
+ylabel('y', 'rotation', 0)
 
-DrawCamera(cam)
+DrawCamera(cam, 'b')
 
 csCovRes = CalculateCovariance(cam, [X;Y]);
 gsCovRes = CalculateResultingCovariance(cam, [X;Y]);
@@ -47,5 +48,5 @@ hold off
 
 %save
 colormap([zeros(63,3) ; ones(1,3)]);
-saveas(figure(1), "figures/covariance_ellipses_one.eps")
+saveas(figure(1), 'figures/covariance_ellipses_one.eps')
 
