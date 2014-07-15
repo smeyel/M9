@@ -106,12 +106,31 @@ axis equal
 hold off
 
 
-return
+%return
+
+plotLimits = 2;
+
+if plotLimits == 1
+    min1 = min(pi/2-a1, a2);
+    max1 = max(pi/2-a1, a2);
+    min2 = min(pi/2-a2, a1);
+    max2 = max(pi/2-a2, a1);
+elseif plotLimits == 2
+	min1 = -a1;
+	max1 = pi-a1;
+	min2 = -a2;
+	max2 = pi-a2;
+elseif plotLimits == 3
+	min1 = 0;
+	max1 = pi/2;
+	min2 = 0;
+	max2 = pi/2;
+end
 
 
 figure
 hold on
-ezsurf(f, [0 pi/2 0 pi/2])
+ezsurf(f, [min1 max1 min2 max2])
 title('f')
 plot(b1, b2, 'k*')
 %axis equal
@@ -120,7 +139,7 @@ hold off
 
 figure
 hold on
-ezsurf(diff(f,g1), [0 pi/2 0 pi/2])
+ezsurf(diff(f,g1), [min1 max1 min2 max2])
 plot(b1, b2, 'k*')
 title('df / dg1')
 %axis equal
@@ -129,7 +148,7 @@ hold off
 
 figure
 hold on
-ezsurf(diff(f,g2), [0 pi/2 0 pi/2])
+ezsurf(diff(f,g2), [min1 max1 min2 max2])
 plot(b1, b2, 'k*')
 title('df / dg2')
 %axis equal
