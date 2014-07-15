@@ -91,7 +91,7 @@ plot([0 metszet2(1)], [0 metszet2(2)], 'g')
 
 
 axis equal
-axis([0 m p2(2) p1(2)])
+axis(eval([0 m p2(2) p1(2)]))
 hold off
 
 dot(p1,p2)
