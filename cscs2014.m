@@ -57,7 +57,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_merge, 'figures/cscs2014/merge.pdf');
+export_fig(fig_merge, 'figures/cscs2014/merge.pdf', '-transparent');
 
 
 
@@ -79,7 +79,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf');
+export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf', '-transparent');
 
 
 
@@ -138,9 +138,9 @@ ylabel('y', 'rotation', 0)
 zlabel('z', 'rotation', 0)
 title('ft')
 
-export_fig(fig_fe, 'figures/cscs2014/fe.pdf');
-export_fig(fig_fd, 'figures/cscs2014/fd.pdf');
-export_fig(fig_ft, 'figures/cscs2014/ft.pdf');
+export_fig(fig_fe, 'figures/cscs2014/fe.pdf', '-transparent');
+export_fig(fig_fd, 'figures/cscs2014/fd.pdf', '-transparent');
+export_fig(fig_ft, 'figures/cscs2014/ft.pdf', '-transparent');
 
 
 
@@ -224,7 +224,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_placement, 'figures/cscs2014/placement.pdf');
+export_fig(fig_placement, 'figures/cscs2014/placement.pdf', '-transparent');
 
 
 
@@ -286,7 +286,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf');
-export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf');
-export_fig(fig_cft, 'figures/cscs2014/cft.pdf');
+export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent');
+export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf', '-transparent');
+export_fig(fig_cft, 'figures/cscs2014/cft.pdf', '-transparent');
 
