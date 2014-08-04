@@ -57,7 +57,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_merge, 'figures/cscs2014/merge.pdf', '-transparent');
+export_fig(fig_merge, 'figures/cscs2014/merge.pdf', '-transparent', '-gray');
 
 
 
@@ -79,7 +79,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf', '-transparent');
+export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf', '-transparent', '-gray');
 
 
 
@@ -106,7 +106,6 @@ fd = K^2 * fd;
 ft = K^2 * ft;
 
 fig_fe = figure;
-colormap gray
 ezsurf(fe, [  0 1000 -1000 1000])
 xlim([0 1000])
 ylim([-1000 1000])
@@ -117,7 +116,6 @@ zlabel('z', 'rotation', 0)
 title('fe')
 
 fig_fd = figure;
-colormap gray
 ezsurf(fd, [100 1000 -1000 1000])
 xlim([0 1000])
 ylim([-1000 1000])
@@ -128,7 +126,6 @@ zlabel('z', 'rotation', 0)
 title('fd')
 
 fig_ft = figure;
-colormap gray
 ezsurf(ft, [100 1000 -1000 1000])
 xlim([0 1000])
 ylim([-1000 1000])
@@ -138,9 +135,9 @@ ylabel('y', 'rotation', 0)
 zlabel('z', 'rotation', 0)
 title('ft')
 
-export_fig(fig_fe, 'figures/cscs2014/fe.pdf', '-transparent');
-export_fig(fig_fd, 'figures/cscs2014/fd.pdf', '-transparent');
-export_fig(fig_ft, 'figures/cscs2014/ft.pdf', '-transparent');
+export_fig(fig_fe, 'figures/cscs2014/fe.pdf', '-transparent', '-gray');
+export_fig(fig_fd, 'figures/cscs2014/fd.pdf', '-transparent', '-gray');
+export_fig(fig_ft, 'figures/cscs2014/ft.pdf', '-transparent', '-gray');
 
 
 
@@ -224,7 +221,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_placement, 'figures/cscs2014/placement.pdf', '-transparent');
+export_fig(fig_placement, 'figures/cscs2014/placement.pdf', '-transparent', '-gray');
 
 
 
@@ -238,7 +235,6 @@ max2 = max(limy);
 
 
 fig_cfe = figure;
-colormap gray
 hold on
 ezcontour(fe, [min1 max1 min2 max2])
 h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
@@ -256,7 +252,6 @@ hold off
 
 
 fig_cfd = figure;
-colormap gray
 hold on
 ezcontour(fd, [min1 max1 min2 max2])
 h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
@@ -274,7 +269,6 @@ hold off
 
 
 fig_cft = figure;
-colormap gray
 hold on
 ezcontour(ft, [min1 max1 min2 max2])
 title('cft')
@@ -286,7 +280,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent');
-export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf', '-transparent');
-export_fig(fig_cft, 'figures/cscs2014/cft.pdf', '-transparent');
+export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent', '-gray');
+export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf', '-transparent', '-gray');
+export_fig(fig_cft, 'figures/cscs2014/cft.pdf', '-transparent', '-gray');
 
