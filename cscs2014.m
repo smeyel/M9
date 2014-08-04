@@ -241,6 +241,8 @@ export_fig(fig_placement, 'figures/cscs2014/placement.pdf', '-transparent', '-gr
 
 
 %% objective function plots
+% use variables from section "placement"
+
 limx = [-a1 ; pi-a1];
 limy = [-(-a2) ; -(pi-a2)];
 min1 = min(limx);
@@ -306,4 +308,158 @@ set(findall(fig_cft,'type','axes'), 'FontSize', font);
 export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent', '-gray');
 export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf', '-transparent', '-gray');
 export_fig(fig_cft, 'figures/cscs2014/cft.pdf', '-transparent', '-gray');
+
+
+
+%% placement parallel
+
+syms g d real
+R_gen = [cos(g) -sin(g) ; sin(g) cos(g)];
+Ci_gen = R_gen * [1/d^2 0 ; 0 0] * R_gen';
+
+
+m = 0.8;
+m1 = 0.2;
+m2 = 0.1;
+
+syms g1 g2 real
+
+d1 = m1/sin(g1);
+d2 = m2/sin(-g2);
+
+Ci1 = subs(Ci_gen, {g,d}, {g1,d1});
+Ci2 = subs(Ci_gen, {g,d}, {g2,d2});
+Ci = Ci1+Ci2;
+
+
+fep = 1/d1^2 + 1/d2^2 - sqrt(1/d1^4 + 1/d2^4 + 2/(d1^2*d2^2)*cos(2*(g1-g2)));
+b1ep =  atan(m1 / m2);
+b2ep = -atan(m2 / m1);
+
+fdp = det(Ci);
+bdp = (1/3 * [2 -1 ; -1 2] * [pi ; pi]);
+b1dp =  bdp(1);
+b2dp = -bdp(2);
+
+ftp = trace(Ci);
+b1tp =  pi/2;
+b2tp = -pi/2;
+
+
+[x y] = pol2cart(b1ep, subs(d1,g1,b1ep));
+p1ep = [x;y];
+[x y] = pol2cart(b2ep, subs(d2,g2,b2ep));
+p2ep = [x;y];
+
+[x y] = pol2cart(b1dp, subs(d1,g1,b1dp));
+p1dp = [x;y];
+[x y] = pol2cart(b2dp, subs(d2,g2,b2dp));
+p2dp = [x;y];
+
+[x y] = pol2cart(b1tp, subs(d1,g1,b1tp));
+p1tp = [x;y];
+[x y] = pol2cart(b2tp, subs(d2,g2,b2tp));
+p2tp = [x;y];
+
+
+fig_placement_parallel = figure;
+hold on
+plot(0, 0, 'ko', 'MarkerFaceColor', 'k')
+
+plot([0 m],  [m1 m1], 'k')
+plot([0 m], -[m2 m2], 'k')
+
+plot([0 p1ep(1)], [0 p1ep(2)], 'k--')
+plot([0 p2ep(1)], [0 p2ep(2)], 'k--')
+plot([0 p1dp(1)], [0 p1dp(2)], 'k-.')
+plot([0 p2dp(1)], [0 p2dp(2)], 'k-.')
+plot([0 p1tp(1)], [0 p1tp(2)], 'k:')
+plot([0 p2tp(1)], [0 p2tp(2)], 'k:')
+
+h1 = plot(p1ep(1),p1ep(2), 'ks', 'MarkerFaceColor','w');
+     plot(p2ep(1),p2ep(2), 'ks', 'MarkerFaceColor','w')
+h2 = plot(p1dp(1),p1dp(2), 'ko', 'MarkerFaceColor','w');
+     plot(p2dp(1),p2dp(2), 'ko', 'MarkerFaceColor','w')
+h3 = plot(p1tp(1),p1tp(2), 'kv', 'MarkerFaceColor','w');
+     plot(p2tp(1),p2tp(2), 'kv', 'MarkerFaceColor','w')
+
+axis equal
+xlim([-0.1 1.1])
+ylim([-0.2 0.3])
+xlabel('x')
+ylabel('y', 'rotation', 0)
+legend([h1 h2 h3], {'eig', 'det', 'trace'})
+legend boxoff
+hold off
+
+export_fig(fig_placement_parallel, 'figures/cscs2014/placement_parallel.pdf', '-transparent', '-gray');
+
+
+
+%% objective function plots parallel
+% use variables from section "placement parallel"
+
+limx = [0 ; pi];
+limy = [0 ; -pi];
+min1 = min(limx);
+max1 = max(limx);
+min2 = min(limy);
+max2 = max(limy);
+
+
+fig_cfep = figure;
+hold on
+ezcontour(fep, [min1 max1 min2 max2])
+h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
+h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
+h = ezplot('g1-g2=3*pi/2'); set(h,'LineStyle', ':');
+title('q_{eig}')
+plot(b1ep, b2ep, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
+axis equal
+xlim([min1 max1])
+ylim([min2 max2])
+xlabel('$\alpha_1$','interpreter','latex')
+ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
+hold off
+
+
+fig_cfdp = figure;
+hold on
+ezcontour(fdp, [min1 max1 min2 max2])
+h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
+h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
+h = ezplot('g1-g2=3*pi/2'); set(h,'LineStyle', ':');
+title('q_{det}')
+plot(b1dp, b2dp, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
+axis equal
+xlim([min1 max1])
+ylim([min2 max2])
+xlabel('$\alpha_1$','interpreter','latex')
+ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
+hold off
+
+
+fig_cftp = figure;
+hold on
+ezcontour(ftp, [min1 max1 min2 max2])
+title('q_{trace}')
+plot(b1tp, b2tp, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
+axis equal
+xlim([min1 max1])
+ylim([min2 max2])
+xlabel('$\alpha_1$','interpreter','latex')
+ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
+hold off
+
+font = 18;
+set(findall(fig_cfep,'type','text'), 'FontSize', font);
+set(findall(fig_cfep,'type','axes'), 'FontSize', font);
+set(findall(fig_cfdp,'type','text'), 'FontSize', font);
+set(findall(fig_cfdp,'type','axes'), 'FontSize', font);
+set(findall(fig_cftp,'type','text'), 'FontSize', font);
+set(findall(fig_cftp,'type','axes'), 'FontSize', font);
+
+export_fig(fig_cfep, 'figures/cscs2014/cfep.pdf', '-transparent', '-gray');
+export_fig(fig_cfdp, 'figures/cscs2014/cfdp.pdf', '-transparent', '-gray');
+export_fig(fig_cftp, 'figures/cscs2014/cftp.pdf', '-transparent', '-gray');
 
