@@ -192,7 +192,7 @@ p2t = [x;y];
 
 fig_placement = figure;
 hold on
-plot(0, 0, 'k*')
+plot(0, 0, 'ko', 'MarkerFaceColor', 'k')
 
 plot([0 2*m],  m*tan(a1)*[1 -1], 'k')
 plot([0 2*m], -m*tan(a2)*[1 -1], 'k')
@@ -239,7 +239,7 @@ h = ezplot('g1-g2=0'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
 title('q_{eig}')
-plot(b1e, b2e, 'k*')
+plot(b1e, b2e, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
 axis equal
 xlim([min1 max1])
 ylim([min2 max2])
@@ -256,7 +256,7 @@ h = ezplot('g1-g2=0'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
 title('q_{det}')
-plot(b1d, b2d, 'k*')
+plot(b1d, b2d, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
 axis equal
 xlim([min1 max1])
 ylim([min2 max2])
@@ -269,7 +269,7 @@ fig_cft = figure;
 hold on
 ezcontour(ft, [min1 max1 min2 max2])
 title('q_{trace}')
-plot(b1t, b2t, 'k*')
+plot(b1t, b2t, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
 axis equal
 xlim([min1 max1])
 ylim([min2 max2])
