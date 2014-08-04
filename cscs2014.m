@@ -57,6 +57,10 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
+font = 14;
+set(findall(fig_merge,'type','text'), 'FontSize', font);
+set(findall(fig_merge,'type','axes'), 'FontSize', font);
+
 export_fig(fig_merge, 'figures/cscs2014/merge.pdf', '-transparent', '-gray');
 
 
@@ -78,6 +82,10 @@ ylim([-550 550])
 xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
+
+font = 14;
+set(findall(fig_ellipses,'type','text'), 'FontSize', font);
+set(findall(fig_ellipses,'type','axes'), 'FontSize', font);
 
 export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf', '-transparent', '-gray');
 
@@ -131,6 +139,14 @@ zlim([0 90])
 xlabel('x')
 ylabel('y', 'rotation', 0)
 title('q_{trace}')
+
+font = 20;
+set(findall(fig_fe,'type','text'), 'FontSize', font);
+set(findall(fig_fe,'type','axes'), 'FontSize', font);
+set(findall(fig_fd,'type','text'), 'FontSize', font);
+set(findall(fig_fd,'type','axes'), 'FontSize', font);
+set(findall(fig_ft,'type','text'), 'FontSize', font);
+set(findall(fig_ft,'type','axes'), 'FontSize', font);
 
 export_fig(fig_fe, 'figures/cscs2014/fe.pdf', '-transparent', '-gray');
 export_fig(fig_fd, 'figures/cscs2014/fd.pdf', '-transparent', '-gray');
@@ -276,6 +292,14 @@ ylim([min2 max2])
 xlabel('$\alpha_1$','interpreter','latex')
 ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
 hold off
+
+font = 18;
+set(findall(fig_cfe,'type','text'), 'FontSize', font);
+set(findall(fig_cfe,'type','axes'), 'FontSize', font);
+set(findall(fig_cfd,'type','text'), 'FontSize', font);
+set(findall(fig_cfd,'type','axes'), 'FontSize', font);
+set(findall(fig_cft,'type','text'), 'FontSize', font);
+set(findall(fig_cft,'type','axes'), 'FontSize', font);
 
 export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent', '-gray');
 export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf', '-transparent', '-gray');
