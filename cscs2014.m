@@ -220,18 +220,20 @@ plot([0 p2d(1)], [0 p2d(2)], 'k-.')
 plot([0 p1t(1)], [0 p1t(2)], 'k:')
 plot([0 p2t(1)], [0 p2t(2)], 'k:')
 
-plot(p1e(1),p1e(2), 'ks', 'MarkerFaceColor','w')
-plot(p2e(1),p2e(2), 'ks', 'MarkerFaceColor','w')
-plot(p1d(1),p1d(2), 'ko', 'MarkerFaceColor','w')
-plot(p2d(1),p2d(2), 'ko', 'MarkerFaceColor','w')
-plot(p1t(1),p1t(2), 'kv', 'MarkerFaceColor','w')
-plot(p2t(1),p2t(2), 'kv', 'MarkerFaceColor','w')
+h1 = plot(p1e(1),p1e(2), 'ks', 'MarkerFaceColor','w');
+     plot(p2e(1),p2e(2), 'ks', 'MarkerFaceColor','w')
+h2 = plot(p1d(1),p1d(2), 'ko', 'MarkerFaceColor','w');
+     plot(p2d(1),p2d(2), 'ko', 'MarkerFaceColor','w')
+h3 = plot(p1t(1),p1t(2), 'kv', 'MarkerFaceColor','w');
+     plot(p2t(1),p2t(2), 'kv', 'MarkerFaceColor','w')
 
 axis equal
 xlim([-0.1 1.1])
 ylim([-0.2 0.3])
 xlabel('x')
 ylabel('y', 'rotation', 0)
+legend([h1 h2 h3], {'eig', 'det', 'trace'})
+legend boxoff
 hold off
 
 export_fig(fig_placement, 'figures/cscs2014/placement.pdf', '-transparent', '-gray');
