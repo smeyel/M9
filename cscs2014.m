@@ -18,9 +18,6 @@ cams{2} = CreateCamera('pos', [0;400]);
 
 K = cams{1}.fx / cams{1}.e;
 
-style = hgexport('factorystyle');
-style.Color = 'gray';
-
 
 
 %% merge
@@ -60,7 +57,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-hgexport(fig_merge,'figures/cscs2014/merge.eps',style);
+export_fig(fig_merge, 'figures/cscs2014/merge.pdf');
 
 
 
@@ -82,7 +79,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-hgexport(fig_ellipses,'figures/cscs2014/ellipses.eps',style);
+export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf');
 
 
 
@@ -109,6 +106,7 @@ fd = K^2 * fd;
 ft = K^2 * ft;
 
 fig_fe = figure;
+colormap gray
 ezsurf(fe, [  0 1000 -1000 1000])
 xlim([0 1000])
 ylim([-1000 1000])
@@ -119,6 +117,7 @@ zlabel('z', 'rotation', 0)
 title('fe')
 
 fig_fd = figure;
+colormap gray
 ezsurf(fd, [100 1000 -1000 1000])
 xlim([0 1000])
 ylim([-1000 1000])
@@ -129,6 +128,7 @@ zlabel('z', 'rotation', 0)
 title('fd')
 
 fig_ft = figure;
+colormap gray
 ezsurf(ft, [100 1000 -1000 1000])
 xlim([0 1000])
 ylim([-1000 1000])
@@ -138,9 +138,9 @@ ylabel('y', 'rotation', 0)
 zlabel('z', 'rotation', 0)
 title('ft')
 
-hgexport(fig_fe,'figures/cscs2014/fe.eps',style);
-hgexport(fig_fd,'figures/cscs2014/fd.eps',style);
-hgexport(fig_ft,'figures/cscs2014/ft.eps',style);
+export_fig(fig_fe, 'figures/cscs2014/fe.pdf');
+export_fig(fig_fd, 'figures/cscs2014/fd.pdf');
+export_fig(fig_ft, 'figures/cscs2014/ft.pdf');
 
 
 
@@ -224,7 +224,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-hgexport(fig_placement,'figures/cscs2014/placement.eps',style);
+export_fig(fig_placement, 'figures/cscs2014/placement.pdf');
 
 
 
@@ -238,7 +238,7 @@ max2 = max(limy);
 
 
 fig_cfe = figure;
-set(gcf, 'colormap', gray)
+colormap gray
 hold on
 ezcontour(fe, [min1 max1 min2 max2])
 h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
@@ -256,7 +256,7 @@ hold off
 
 
 fig_cfd = figure;
-set(gcf, 'colormap', gray)
+colormap gray
 hold on
 ezcontour(fd, [min1 max1 min2 max2])
 h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
@@ -274,7 +274,7 @@ hold off
 
 
 fig_cft = figure;
-set(gcf, 'colormap', gray)
+colormap gray
 hold on
 ezcontour(ft, [min1 max1 min2 max2])
 title('cft')
@@ -286,7 +286,7 @@ xlabel('x')
 ylabel('y', 'rotation', 0)
 hold off
 
-hgexport(fig_cfe,'figures/cscs2014/cfe.eps',style);
-hgexport(fig_cfd,'figures/cscs2014/cfd.eps',style);
-hgexport(fig_cft,'figures/cscs2014/cft.eps',style);
+export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf');
+export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf');
+export_fig(fig_cft, 'figures/cscs2014/cft.pdf');
 
