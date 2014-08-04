@@ -252,10 +252,10 @@ max2 = max(limy);
 fig_cfe = figure;
 hold on
 ezcontour(fe, [min1 max1 min2 max2])
-h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=0'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
+h = ezplot('g1-g2=3*pi/2'); set(h,'LineStyle', ':');
 title('q_{eig}')
 plot(b1e, b2e, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
 axis equal
@@ -269,10 +269,10 @@ hold off
 fig_cfd = figure;
 hold on
 ezcontour(fd, [min1 max1 min2 max2])
-h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=0'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
+h = ezplot('g1-g2=3*pi/2'); set(h,'LineStyle', ':');
 title('q_{det}')
 plot(b1d, b2d, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'k')
 axis equal
