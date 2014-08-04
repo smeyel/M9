@@ -112,8 +112,7 @@ ylim([-1000 1000])
 zlim([0 5])
 xlabel('x')
 ylabel('y', 'rotation', 0)
-zlabel('z', 'rotation', 0)
-title('fe')
+title('q_{eig}')
 
 fig_fd = figure;
 ezsurf(fd, [100 1000 -1000 1000])
@@ -122,8 +121,7 @@ ylim([-1000 1000])
 zlim([0 1.5e-4])
 xlabel('x')
 ylabel('y', 'rotation', 0)
-zlabel('z', 'rotation', 0)
-title('fd')
+title('q_{det}')
 
 fig_ft = figure;
 ezsurf(ft, [100 1000 -1000 1000])
@@ -132,8 +130,7 @@ ylim([-1000 1000])
 zlim([0 90])
 xlabel('x')
 ylabel('y', 'rotation', 0)
-zlabel('z', 'rotation', 0)
-title('ft')
+title('q_{trace}')
 
 export_fig(fig_fe, 'figures/cscs2014/fe.pdf', '-transparent', '-gray');
 export_fig(fig_fd, 'figures/cscs2014/fd.pdf', '-transparent', '-gray');
@@ -241,13 +238,13 @@ h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=0'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
-title('cfe')
+title('q_{eig}')
 plot(b1e, b2e, 'k*')
 axis equal
 xlim([min1 max1])
 ylim([min2 max2])
-xlabel('x')
-ylabel('y', 'rotation', 0)
+xlabel('$\alpha_1$','interpreter','latex')
+ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
 hold off
 
 
@@ -258,26 +255,26 @@ h = ezplot('g1-g2=-pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=0'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi/2'); set(h,'LineStyle', ':');
 h = ezplot('g1-g2=pi'); set(h,'LineStyle', ':');
-title('cfd')
+title('q_{det}')
 plot(b1d, b2d, 'k*')
 axis equal
 xlim([min1 max1])
 ylim([min2 max2])
-xlabel('x')
-ylabel('y', 'rotation', 0)
+xlabel('$\alpha_1$','interpreter','latex')
+ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
 hold off
 
 
 fig_cft = figure;
 hold on
 ezcontour(ft, [min1 max1 min2 max2])
-title('cft')
+title('q_{trace}')
 plot(b1t, b2t, 'k*')
 axis equal
 xlim([min1 max1])
 ylim([min2 max2])
-xlabel('x')
-ylabel('y', 'rotation', 0)
+xlabel('$\alpha_1$','interpreter','latex')
+ylabel('$\alpha_2$','interpreter','latex', 'rotation', 0)
 hold off
 
 export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent', '-gray');
