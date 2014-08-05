@@ -318,7 +318,8 @@ R_gen = [cos(g) -sin(g) ; sin(g) cos(g)];
 Ci_gen = R_gen * [1/d^2 0 ; 0 0] * R_gen';
 
 
-m = 0.8;
+mm = -0.1;
+m = 0.4;
 m1 = 0.2;
 m2 = 0.1;
 
@@ -366,8 +367,8 @@ fig_placement_parallel = figure;
 hold on
 plot(0, 0, 'ko', 'MarkerFaceColor', 'k')
 
-plot([0 m],  [m1 m1], 'k')
-plot([0 m], -[m2 m2], 'k')
+plot([mm m],  [m1 m1], 'k')
+plot([mm m], -[m2 m2], 'k')
 
 plot([0 p1ep(1)], [0 p1ep(2)], 'k--')
 plot([0 p2ep(1)], [0 p2ep(2)], 'k--')
@@ -384,8 +385,8 @@ h3 = plot(p1tp(1),p1tp(2), 'kv', 'MarkerFaceColor','w');
      plot(p2tp(1),p2tp(2), 'kv', 'MarkerFaceColor','w')
 
 axis equal
-xlim([-0.1 1.1])
-ylim([-0.2 0.3])
+xlim([-0.15 0.6])
+ylim([-0.15 0.25])
 xlabel('x')
 ylabel('y', 'rotation', 0)
 legend([h1 h2 h3], {'eig', 'det', 'trace'})
