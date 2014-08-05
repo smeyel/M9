@@ -61,7 +61,7 @@ font = 14;
 set(findall(fig_merge,'type','text'), 'FontSize', font);
 set(findall(fig_merge,'type','axes'), 'FontSize', font);
 
-export_fig(fig_merge, 'figures/cscs2014/merge.pdf', '-transparent', '-gray');
+export_fig(fig_merge, 'figures/cscs2014/merge.eps', '-transparent', '-gray');
 
 
 
@@ -87,7 +87,7 @@ font = 14;
 set(findall(fig_ellipses,'type','text'), 'FontSize', font);
 set(findall(fig_ellipses,'type','axes'), 'FontSize', font);
 
-export_fig(fig_ellipses, 'figures/cscs2014/ellipses.pdf', '-transparent', '-gray');
+export_fig(fig_ellipses, 'figures/cscs2014/ellipses.eps', '-transparent', '-gray');
 
 
 
@@ -148,9 +148,9 @@ set(findall(fig_fd,'type','axes'), 'FontSize', font);
 set(findall(fig_ft,'type','text'), 'FontSize', font);
 set(findall(fig_ft,'type','axes'), 'FontSize', font);
 
-export_fig(fig_fe, 'figures/cscs2014/fe.pdf', '-transparent', '-gray');
-export_fig(fig_fd, 'figures/cscs2014/fd.pdf', '-transparent', '-gray');
-export_fig(fig_ft, 'figures/cscs2014/ft.pdf', '-transparent', '-gray');
+export_fig(fig_fe, 'figures/cscs2014/fe.eps', '-transparent', '-gray');
+export_fig(fig_fd, 'figures/cscs2014/fd.eps', '-transparent', '-gray');
+export_fig(fig_ft, 'figures/cscs2014/ft.eps', '-transparent', '-gray');
 
 
 
@@ -236,7 +236,7 @@ legend([h1 h2 h3], {'eig', 'det', 'trace'})
 legend boxoff
 hold off
 
-export_fig(fig_placement, 'figures/cscs2014/placement.pdf', '-transparent', '-gray');
+export_fig(fig_placement, 'figures/cscs2014/placement.eps', '-transparent', '-gray');
 
 
 
@@ -305,9 +305,9 @@ set(findall(fig_cfd,'type','axes'), 'FontSize', font);
 set(findall(fig_cft,'type','text'), 'FontSize', font);
 set(findall(fig_cft,'type','axes'), 'FontSize', font);
 
-export_fig(fig_cfe, 'figures/cscs2014/cfe.pdf', '-transparent', '-gray');
-export_fig(fig_cfd, 'figures/cscs2014/cfd.pdf', '-transparent', '-gray');
-export_fig(fig_cft, 'figures/cscs2014/cft.pdf', '-transparent', '-gray');
+export_fig(fig_cfe, 'figures/cscs2014/cfe.eps', '-transparent', '-gray');
+export_fig(fig_cfd, 'figures/cscs2014/cfd.eps', '-transparent', '-gray');
+export_fig(fig_cft, 'figures/cscs2014/cft.eps', '-transparent', '-gray');
 
 
 
@@ -392,7 +392,7 @@ legend([h1 h2 h3], {'eig', 'det', 'trace'})
 legend boxoff
 hold off
 
-export_fig(fig_placement_parallel, 'figures/cscs2014/placement_parallel.pdf', '-transparent', '-gray');
+export_fig(fig_placement_parallel, 'figures/cscs2014/placement_parallel.eps', '-transparent', '-gray');
 
 
 
@@ -459,7 +459,7 @@ set(findall(fig_cfdp,'type','axes'), 'FontSize', font);
 set(findall(fig_cftp,'type','text'), 'FontSize', font);
 set(findall(fig_cftp,'type','axes'), 'FontSize', font);
 
-export_fig(fig_cfep, 'figures/cscs2014/cfep.pdf', '-transparent', '-gray');
-export_fig(fig_cfdp, 'figures/cscs2014/cfdp.pdf', '-transparent', '-gray');
-export_fig(fig_cftp, 'figures/cscs2014/cftp.pdf', '-transparent', '-gray');
+export_fig(fig_cfep, 'figures/cscs2014/cfep.eps', '-transparent', '-gray');
+export_fig(fig_cfdp, 'figures/cscs2014/cfdp.eps', '-transparent', '-gray');
+export_fig(fig_cftp, 'figures/cscs2014/cftp.eps', '-transparent', '-gray');
 
