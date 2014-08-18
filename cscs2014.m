@@ -152,6 +152,10 @@ export_fig(fig_fe, 'figures/cscs2014/fe.eps', '-transparent', '-gray');
 export_fig(fig_fd, 'figures/cscs2014/fd.eps', '-transparent', '-gray');
 export_fig(fig_ft, 'figures/cscs2014/ft.eps', '-transparent', '-gray');
 
+export_fig(fig_fe, 'figures/cscs2014/fe_color.eps', '-transparent');
+export_fig(fig_fd, 'figures/cscs2014/fd_color.eps', '-transparent');
+export_fig(fig_ft, 'figures/cscs2014/ft_color.eps', '-transparent');
+
 
 
 %% placement
